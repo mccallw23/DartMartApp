@@ -20,6 +20,36 @@ function ProfilePage(props){
         Alert.alert('Coming Soon!', 'Users will be able to show photo and change name on order tickets.');
     }
 
+    function extraDriverButton()
+    {
+        // if the user is authorized to be a driver, give them the option to toggle between driver view and customer view
+
+        if(user?.isDriverAuthorized)
+        {
+           if(user?.isDriver)
+           {
+            return (<TouchableOpacity onPress={
+                        () => props.updateUser(user.id, {isDriver: false})} 
+                        style={styles.profileButton}>
+                        <Ionicons name='arrow-back' size={50} color={'white'}/>
+
+                        <Text style={styles.text1}>Customer View</Text>
+                    </TouchableOpacity>);
+           }
+           else
+           {
+            return (
+            <TouchableOpacity onPress={
+                        () => props.updateUser(user.id, {isDriver: true})} 
+                        style={styles.profileButton}>
+                        <MaterialCommunityIcons name="account-switch-outline" size={50} color="whitesmoke" />
+                        <Text style={styles.text1}>Driver View</Text>
+                    </TouchableOpacity>
+            )
+           }
+        }
+    }
+
     return (
         <View backgroundColor='red' style={styles.container}>
 
@@ -42,18 +72,8 @@ function ProfilePage(props){
                         <Text style={styles.text1}>Logout</Text>
                     </TouchableOpacity>
 
-                    {user?.isDriver === false ? <TouchableOpacity onPress={() => props.updateUser(user.id, {isDriver: true})} style={styles.profileButton}>
-                        <MaterialCommunityIcons name="account-switch-outline" size={50} color="whitesmoke" />
-                        <Text style={styles.text1}>Driver View</Text>
-                    </TouchableOpacity> : null}
+                    {extraDriverButton()}
 
-                    {user?.isDriver === true ? <TouchableOpacity onPress={
-                        () => props.updateUser(user.id, {isDriver: false})} 
-                        style={styles.profileButton}>
-                        <Ionicons name='arrow-back' size={50} color={'white'}/>
-
-                        <Text style={styles.text1}>Customer View</Text>
-                    </TouchableOpacity> : null}
                 </View>
         </View>
     );

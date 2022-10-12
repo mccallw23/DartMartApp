@@ -1,7 +1,7 @@
 import { doc, setDoc, addDoc, updateDoc, getDoc, getFirestore, getDocs, collection, query, where } from "firebase/firestore"; 
 import axios from 'axios';
 import { initializeApp } from "firebase/app";
-import { SERVER_URL_HEROKU } from "../Constants";
+import { SERVER_URL_HEROKU, ROUTE_CUSTOMERS} from "../Constants";
 //import Stripe from "stripe";
 //import 'dotenv/config';
 
@@ -90,6 +90,7 @@ import { SERVER_URL_HEROKU } from "../Constants";
         {
           email: data.email,
           name: data.name,
+          isDriverAuthorized: false,
         },
       );
       console.log("customer found:", customer.data)

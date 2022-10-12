@@ -21,6 +21,7 @@ function HomePage(props){
     useEffect(() => {
         props.fetchItems();
     }, [])
+    
     return (
         <View style={{backgroundColor: '#02604E'}}>
             <ScrollView ref={ref} contentContainerStyle={styles.container} stickyHeaderIndices={[0]} >
