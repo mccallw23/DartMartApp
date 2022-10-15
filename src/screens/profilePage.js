@@ -20,6 +20,10 @@ function ProfilePage(props){
         Alert.alert('Coming Soon!', 'Users will be able to show photo and change name on order tickets.');
     }
 
+      const contactAlert = () => {
+        Alert.alert('Contact us at 203-231-6666, or email us at dartmartapp@gmail.com.  Please provide your order number and we will be happy to help you.');
+    }
+
     function extraDriverButton()
     {
         // if the user is authorized to be a driver, give them the option to toggle between driver view and customer view
@@ -57,6 +61,10 @@ function ProfilePage(props){
                 {user?.isDriver === false ? <Text style={styles.text2}> Customer </Text> :  
                 <Text style={styles.text2}> Driver </Text> }
                 <View style={styles.buttonsSection}>
+                    <TouchableOpacity onPress={contactAlert} style={styles.profileButton}>
+                        <MaterialIcons name="contact-phone" size={50} color="whitesmoke" />
+                        <Text style={styles.text1}>Contact Us</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.profileButton} onPress={futureFeatureAlertPersonalInfo}>
                         <AntDesign name="user" size={50} color="whitesmoke" />
                         <Text style={styles.text1}>Personal Info</Text>
