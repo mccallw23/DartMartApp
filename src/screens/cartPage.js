@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, TextInput   } from 'react-native';
 import { connect, useSelector } from 'react-redux';
 import { StyleSheet, Text, Image, View, TouchableOpacity, Dimensions, ScrollView, Modal, Pressable, Button, Alert} from 'react-native';
 import { CardField, retrievePaymentIntent, useStripe} from '@stripe/stripe-react-native';
 import { addItem, submitOrder, removeItem, confirmPayment } from '../actions/index';
 import axios from "axios";
-
-
 import { Ionicons } from "@expo/vector-icons";
 import { ROUTE_PAYMENT_SHEET, SERVER_URL_HEROKU } from '../Constants';
 import { useClientSocket } from '../components/clientSocket';
@@ -29,6 +27,7 @@ function CartPage(props){
     const [cartTotal, setCartTotal] = useState(0);
     const [fees, setFees] = useState(0);
     const [sum, setSum] = useState(0);
+    const [address, setAddress] = useState(null);
    
     const { initPaymentSheet, presentPaymentSheet} = useStripe();
 
@@ -154,6 +153,7 @@ function CartPage(props){
     }
     
 
+
     useEffect(() => {
         setTempQuantity(1);
     }, [modalVisible])
@@ -199,6 +199,18 @@ function CartPage(props){
             {/* SCROLL VIEW FOR ITEMS IN CART */}
             <Text style={styles.featuredText}>Shopping Cart</Text>
             <ScrollView contentContainerStyle={styles.itemsContainer}>
+                {/* text entry space for a delivery address */}
+                <View style={styles.addressContainer}>
+                    <Text style={styles.addressText}>Delivery Address:</Text>
+                    <TextInput
+                        style={styles.addressInput}
+                        placeholder='Enter your address'
+                        placeholderTextColor='white'
+                        onChangeText={text => setAddress(text)}
+                        value={address}
+                    />
+                    <Text>*** address information must be complete, and within 1.5 miles of Dartmouth college ***</Text>
+                </View>
                 {/* <View style={styles.itemsContainer}> */}
                     {cart.map(({item, quantity}) => {
                         return (
@@ -319,6 +331,37 @@ const styles = StyleSheet.create({
     card:
     {
         backgroundColor: '#efefefef',
+    },
+    addressContainer:
+    {
+        backgroundColor: '#02604E',
+        width: windowWidth * .9,
+        height: windowHeight * .1,
+        borderRadius: 10,
+        margin: 10,
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    addressInput:
+    {
+        backgroundColor: '#02604E',
+        width: windowWidth * .8,
+        height: windowHeight * .05,
+        borderRadius: 10,
+        margin: 10,
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white',
+    },
+
+    addressText:
+    {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     cardContainer:
     {
