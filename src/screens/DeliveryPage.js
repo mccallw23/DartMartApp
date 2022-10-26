@@ -13,10 +13,14 @@ function DeliveryPage(props){
     // if there are orders, they have been paid for already.
 
      // Returning Undefined????????? ==> Need to fix this
-    const userOrders = useSelector((state) => state.order?.all);
+    //const userOrders = useSelector((state) => state.order?.all);
+    // find the orders that are associated with the user from all of the orders
     const orders = useSelector((state) => state.order.all)
+    const userOrders = orders?.filter((order) => order.userId === userId);
     
-    const currOrder = orders[orders?.length - 1]
+    
+    // the last order that this user placed
+    const currOrder = userOrders?.[userOrders.length - 1];
 
     const orderStatusCheck  = () => {
         console.log("DeliveryPage.js || OrderStatusCheck || userID :", userId, typeof userId);

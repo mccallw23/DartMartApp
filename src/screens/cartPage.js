@@ -8,12 +8,12 @@ import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { ROUTE_PAYMENT_SHEET, SERVER_URL_HEROKU } from '../Constants';
 import { useClientSocket } from '../components/clientSocket';
+const devPerms = true;
 
 function CartPage(props){
     const [joinRoomForPayment] = useClientSocket({
         enabled: true
     })
-
     const [paymentSubmitted, setPaymentSubmitted] = useState(false);
 
     const paymentConfirmed = useSelector((state) => state.payment.paymentConfirmed);
@@ -80,6 +80,23 @@ function CartPage(props){
         //        orderPaymentAmount: cartTotal
         //    })
        
+        // if the time is not between 7 PM and 11:59 PM
+        if ((new Date().getHours() < 19 || new Date().getHours() > 23 && new Date().getMinutes() > 59) && devPerms === false) {
+            Alert.alert("Sorry, we are closed for the day. Please come back tomorrow between 7 PM and 11:59 PM.")
+        }
+        //otherwise, if address is not set, or is below 5 characters, alert the user to set a valid address
+        else if(address == null || address == "" || address.length < 5){
+            Alert.alert(
+                "Address not set",
+                "Please set a valid address.",
+                [
+                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                ]
+            );
+        }
+        else
+        {
+        console.log("address: ", address);
         const initialize = await initializePaymentSheet();
         const {clientSecret, errorWhatever} = await fetchPaymentIntentClientSecret();
         const { error } = await presentPaymentSheet({ clientSecret, confirmPayment: false });
@@ -93,15 +110,17 @@ function CartPage(props){
                     customerId: user.id,
                     orderItems: cart,
                     status: "queued",
-                    orderPaymentAmount: cartTotal
+                    orderPaymentAmount: cartTotal,
+                    address: address
                     })
 
                     setPaymentSubmitted(true);
                 }
-        } else {
+        } 
+    }
+        else {
             Alert.alert('Hold on!', 'Your cart is empty!');
         }
-
   };
  
   useEffect(() => {
@@ -201,7 +220,7 @@ function CartPage(props){
             <ScrollView contentContainerStyle={styles.itemsContainer}>
                 {/* text entry space for a delivery address */}
                 <View style={styles.addressContainer}>
-                    <Text style={styles.addressText}>Delivery Address:</Text>
+                    <Text style={styles.addressText}> Enter Your Delivery Address:</Text>
                     <TextInput
                         style={styles.addressInput}
                         placeholder='Enter your address'
@@ -209,7 +228,7 @@ function CartPage(props){
                         onChangeText={text => setAddress(text)}
                         value={address}
                     />
-                    <Text>*** address information must be complete, and within 1.5 miles of Dartmouth college ***</Text>
+                    <Text>*** address must be within 1.5 miles of Dartmouth college ***</Text>
                 </View>
                 {/* <View style={styles.itemsContainer}> */}
                     {cart.map(({item, quantity}) => {
