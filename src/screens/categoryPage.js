@@ -6,8 +6,16 @@ import { addItem, fetchItems } from '../actions/index';
 import { Ionicons } from "@expo/vector-icons";
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
+import { readString } from 'react-native-csv';
 
+// import a CSV file
 function CategoryPage(props){
+
+    // var TJtext = fs.readFileSync("../../assets/csv/TJProducs.csv");
+    // const results = readString(TJtext);
+    // console.log(results);
+    // readString(csvString)
+
     const category = useSelector((state) => state.item.category);
     const allItems = useSelector((state) => state.item.allItems);
     const [modalVisible, setModalVisible] = useState(false); 

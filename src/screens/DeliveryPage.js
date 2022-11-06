@@ -20,7 +20,7 @@ function DeliveryPage(props){
     
     
     // the last order that this user placed
-    const currOrder = userOrders?.[userOrders.length - 1];
+    const currOrder = orders?.[orders.length - 1];
 
     const orderStatusCheck  = () => {
         console.log("DeliveryPage.js || OrderStatusCheck || userID :", userId, typeof userId);
@@ -100,6 +100,7 @@ function DeliveryPage(props){
               <Text style={styles.text1} justifyContent='center' >Return Home</Text>
             </TouchableOpacity>
         </View>
+
 
     </View>
         )

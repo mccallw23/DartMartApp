@@ -133,6 +133,8 @@ function CartPage(props){
         setCartTotal(Math.round((tempSum + fees) * 100))
   }, []);
 
+  // this useEffect is for when the payment is confirmed
+  // it will reset the cart and set the paymentConfirmed to false
   useEffect(() => {
     if (paymentConfirmed) {
         Alert.alert('Payment confirmed! Your order has been created!');
