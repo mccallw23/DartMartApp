@@ -84,7 +84,7 @@ function DeliveryPage(props){
 
                         {currOrder?.orderItems?.map( ({item, quantity}) => {
                             return(
-                                <View style={styles.itemLine}>
+                                <View key={item + quantity} style={styles.itemLine}>
                                     <Text style={styles.text1}>{item.name} (x{quantity})</Text>
                                     <Text style={styles.text1}>${item.cost * quantity}</Text>
                                 </View>

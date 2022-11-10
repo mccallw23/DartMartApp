@@ -6,7 +6,7 @@ import { addItem, fetchItems } from '../actions/index';
 import { Ionicons } from "@expo/vector-icons";
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-import { readString } from 'react-native-csv';
+
 
 // import a CSV file
 function CategoryPage(props){
@@ -15,6 +15,7 @@ function CategoryPage(props){
     // const results = readString(TJtext);
     // console.log(results);
     // readString(csvString)
+
 
     const category = useSelector((state) => state.item.category);
     const allItems = useSelector((state) => state.item.allItems);
@@ -59,6 +60,7 @@ function CategoryPage(props){
                     })}
                 </View>
             </ScrollView>
+            
             <View style={{width: windowWidth, height: windowHeight, backgroundColor: modalVisible ? 'rgba(0,0,0,.5)' : 'transparent'}}>
                 <Modal
                 animationType="slide"

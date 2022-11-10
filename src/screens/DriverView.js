@@ -30,7 +30,7 @@ function DriverView(props) {
                                     <View>
                                         <Text>{order.id}</Text>
                                         <Text>${order.orderPaymentAmount/100}</Text>
-                                        <Text>Deliver to: {order.deliveryAddress}</Text>
+                                        <Text>Deliver to: {order.address}</Text>
                                     </View>
                                 </TouchableHighlight>)
                         })}
@@ -91,7 +91,7 @@ function DriverView(props) {
                         </View>
                         <Text style={{fontWeight: 'bold', fontSize: 20, marginTop: 10}}>Order Total: ${selectedOrder.orderPaymentAmount/100}</Text>
                         <Text style={{fontWeight: 'bold', fontSize: 20}}>Delivery Address:</Text>
-                        <Text style={{fontSize: 20}}>To be implemented</Text>
+                        <Text style={{fontSize: 20}}>yolo</Text>
 
                         <View style={styles.cartButtons}>
                             <View style={{alignItems:'center'}}>
@@ -150,7 +150,9 @@ function DriverView(props) {
                         </View>
                         <Text style={{fontWeight: 'bold', fontSize: 20, marginTop: 10}}>Order Total: ${selectedOrder.orderPaymentAmount/100}</Text>
                         <Text style={{fontWeight: 'bold', fontSize: 20}}>Delivery Address:</Text>
-                        <Text style={{fontSize: 20}}>To be implemented</Text>
+                        <Text style={{fontSize: 20}}>{
+                            selectedOrder.address
+                        }</Text>
 
                         <View style={styles.cartButtons}>
                             <View style={{alignItems:'center'}}>
@@ -170,7 +172,6 @@ function DriverView(props) {
                                 <Text style={{fontWeight: 'bold', fontSize: 15}}>Complete Order</Text>
                             </View>
                         </View>
-                        
                     </View>
                 </Modal>
             

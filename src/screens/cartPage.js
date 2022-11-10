@@ -167,7 +167,7 @@ function CartPage(props){
         {
                 amount: cartTotal
         });
-        console.log('rseponse', response.data);
+        console.log('response', response.data);
         const {clientSecret, error} = response.data;
         console.log("client secret: ", clientSecret);
         return {clientSecret, error};

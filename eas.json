@@ -13,6 +13,13 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios":
+      {
+        "appleId": "manuwill@icloud.com",
+        "ascAppId": "6444271740",
+        "appleTeamId": "2T2FF4LY478"
+      }
+    }
   }
 }
