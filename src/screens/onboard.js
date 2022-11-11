@@ -15,15 +15,6 @@ const Stack = createStackNavigator();
 
 function Onboard(props){
 
-    /* let [themeFontLoad] = useFonts({
-        'Poppins': require('../assets/fonts/Poppins-Medium.ttf'),
-      });
-    
-    if (!themeFontLoad) {
-    // (deprecated) prevent app from displaying without the theme font loaded in
-        return <AppLoading />;
-    }*/
-
     return (
         <Stack.Navigator
         screenOptions={{

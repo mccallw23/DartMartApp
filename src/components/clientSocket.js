@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
-import { SERVER_URL_HEROKU } from '../Constants';
+import { SERVER_URL_HEROKU, LIVE_STRIPE_SERVER } from "../Constants";
 import { confirmPayment } from '../actions/index';
 
 export const useClientSocket = ({paymentIntentId, enabled }) => {
@@ -20,7 +20,7 @@ export const useClientSocket = ({paymentIntentId, enabled }) => {
     if (!enabled) {
       return;
     }
-    const socket = io(SERVER_URL_HEROKU, { })
+    const socket = io(LIVE_STRIPE_SERVER, {});
 
     socket.on('disconnect', () => {
       console.log('disconnected');

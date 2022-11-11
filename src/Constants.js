@@ -5,3 +5,5 @@ export const ROUTE_SSO_LOGIN = "/sso_login"
 export const ROUTE_SSO_LOGOUT = "/sso_logout"
 export const ROUTE_PAYMENT_SHEET = "/payment-sheet"
 export const ROUTE_CUSTOMERS = "/v1/customers"
+export const LIVE_STRIPE_SERVER = "https://dartmartstripeapi.herokuapp.com";
+

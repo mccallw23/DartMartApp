@@ -6,7 +6,11 @@ import { CardField, retrievePaymentIntent, useStripe} from '@stripe/stripe-react
 import { addItem, submitOrder, removeItem, confirmPayment } from '../actions/index';
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
-import { ROUTE_PAYMENT_SHEET, SERVER_URL_HEROKU } from '../Constants';
+import {
+  ROUTE_PAYMENT_SHEET,
+  SERVER_URL_HEROKU,
+  LIVE_STRIPE_SERVER,
+} from "../Constants";
 import { useClientSocket } from '../components/clientSocket';
 const devPerms = true;
 
@@ -32,10 +36,13 @@ function CartPage(props){
     const { initPaymentSheet, presentPaymentSheet} = useStripe();
 
   const fetchPaymentSheetParams = async () => {
-    const response = await axios.post(`${SERVER_URL_HEROKU}${ROUTE_PAYMENT_SHEET}`, {
+    const response = await axios.post(
+      `${LIVE_STRIPE_SERVER}${ROUTE_PAYMENT_SHEET}`,
+      {
         amount: cartTotal,
-        stripeId: user.stripeId
-    });
+        stripeId: user.stripeId,
+      }
+    );
     const { paymentIntentId, paymentIntent, ephemeralKey, customer } = response.data;
     joinRoomForPayment(paymentIntentId)
 
@@ -148,13 +155,11 @@ function CartPage(props){
 
     const fetchSuccessCode = async () => 
     {
-        const response = axios.post(`${SERVER_URL_HEROKU}/payment-success`, 
-        {
-            method: "POST",
-            headers: 
-            {
-                "Content-Type" : "application/json",
-            },
+        const response = axios.post(`${LIVE_STRIPE_SERVER}/payment-success`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         // const {success} = await response.json();
         console.log("client secret: ", success);
@@ -163,10 +168,12 @@ function CartPage(props){
 
     const fetchPaymentIntentClientSecret = async () => 
     {
-        const response = await axios.post(`${SERVER_URL_HEROKU}/create-payment-intent`, 
-        {
-                amount: cartTotal
-        });
+        const response = await axios.post(
+          `${LIVE_STRIPE_SERVER}/create-payment-intent`,
+          {
+            amount: cartTotal,
+          }
+        );
         console.log('response', response.data);
         const {clientSecret, error} = response.data;
         console.log("client secret: ", clientSecret);
