@@ -19,8 +19,10 @@ app.use(express.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}
 app.use(bodyParser.raw({type: '*/*'}));
 const port = process.env.PORT || 3000;
 //const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY;
+const PUBLISHABLE_KEY_LIVE = process.env.PUBLISHABLE_KEY_LIVE;
+const SECRET_KEY_LIVE = process.env.SECRET_KEY_LIVE;
 //const SECRET_KEY = process.env.SECRET_KEY;
-const stripe = new Stripe('sk_test_51L2ihZH8XcWRx3ZXDdopoeHEEQGQN2mtcchVdxMazkyEkzW78vrueW5Ah3VDWoBlEHdbjLLWkCvldQpRFVzwPqVm00k6dbYlvi', { apiVersion: '2020-08-27' });
+const stripe = new Stripe(SECRET_KEY_LIVE, { apiVersion: '2020-08-27' });
 
 var success = false;
 
@@ -47,8 +49,8 @@ app.get('/test', (req, res) => {
 app.post('/webhook', express.raw({type: 'application/json'}), function(request, response) {
   const sig = request.headers['stripe-signature'];
   const body = request.body;
-  console.log("signature from the homies:", sig);
-  console.log("secret key from the homies", endpointSecret);
+  //console.log("signature from the homies:", sig);
+  //console.log("secret key from the homies", endpointSecret);
 
      let event = request.body;
 
@@ -145,7 +147,7 @@ app.post('/payment-sheet', async (req, res) => {
     paymentIntent: paymentIntent.client_secret,
     ephemeralKey: ephemeralKey.secret,
     customer: customer.id,
-    publishableKey: 'pk_test_51L2ihZH8XcWRx3ZXYWgTAHXAy2192jRAEl3EQh56T5hKA5GSJP2FieJ2erTBIfeRFdpLPj4ltd3b4Sk0aD82v77u00rzVM0x0i'
+    publishableKey: PUBLISHABLE_KEY_LIVE,
   });
 });
 
