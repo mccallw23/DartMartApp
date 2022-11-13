@@ -43,7 +43,11 @@ function CartPage(props){
         stripeId: user.stripeId,
       }
     );
+    // const { paymentIntentId, paymentIntent, ephemeralKey, customer } = response.data;
     const { paymentIntentId, paymentIntent, ephemeralKey, customer } = response.data;
+    console.log("eiuhieufhiweufhiseufhsei9 \n")
+    console.log(paymentIntentId, ephemeralKey, customer);
+    console.log("\npaymentIntentId8888888:", paymentIntentId);
     joinRoomForPayment(paymentIntentId)
 
     return {
@@ -120,7 +124,6 @@ function CartPage(props){
                     orderPaymentAmount: cartTotal,
                     address: address
                     })
-
                     setPaymentSubmitted(true);
                 }
         } 
@@ -201,9 +204,6 @@ function CartPage(props){
     useEffect(() => {
         setCartTotal(Math.round((sum + fees) * 100))
     }, [fees])
-    // useEffect(() => {
-    //     setCartTotal(Math.round((sum + fees) * 100));
-    // }, [fees, sum])
 
     if (paymentSubmitted && !paymentConfirmed) {
         return (

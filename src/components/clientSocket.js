@@ -34,9 +34,11 @@ export const useClientSocket = ({paymentIntentId, enabled }) => {
 
         engine.once("upgrade", () => {
            console.log("transport after upgrade:", engine.transport.name)
+            console.log("PAYMENT", paymentIntentId);
         })
-
+       
         if (paymentIntentId) {
+          console.log("joining room for paymentIntentId:", paymentIntentId);
           joinRoomForPayment(paymentIntentId);
         }
     })

@@ -22,23 +22,26 @@ const store = configureStore({
 
 const Stack = createStackNavigator();
 function App(props){
-  return(
-    <StripeProvider publishableKey={PUBLISHABLE_KEY_LIVE}
-    merchantIdentifier='DartMart LLC'>
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{
-          headerShown: false,
-          headerLeft: () => null,
-          gestureEnabled: false,
-        }}
-        >
-          <Stack.Screen name="Login" component={Onboard} />
-          <Stack.Screen name="Main" component={MainTabBar} />
-          <Stack.Screen name="Logout" component={SSOLogout} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+  return (
+    <StripeProvider
+      publishableKey={PUBLISHABLE_KEY_LIVE}
+      merchantIdentifier="DartMart LLC"
+    >
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              headerLeft: () => null,
+              gestureEnabled: false,
+            }}
+          >
+            <Stack.Screen name="Login" component={Onboard} />
+            <Stack.Screen name="Main" component={MainTabBar} />
+            <Stack.Screen name="Logout" component={SSOLogout} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </StripeProvider>
   ); 
 };

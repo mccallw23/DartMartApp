@@ -2,7 +2,7 @@
   "expo": {
     "name": "project-dartmart",
     "slug": "project-dartmart",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./src/assets/DartMartLogo.png",
     "userInterfaceStyle": "light",
