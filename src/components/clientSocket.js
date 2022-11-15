@@ -1,20 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
-import { SERVER_URL_HEROKU, LIVE_STRIPE_SERVER } from "../Constants";
+import { SERVER_URL_HEROKU, LIVE_STRIPE_SERVER } from '../Constants';
 import { confirmPayment } from '../actions/index';
 
-export const useClientSocket = ({paymentIntentId, enabled }) => {
+export const useClientSocket = ({ paymentIntentId, enabled }) => {
   const ref = useRef(null);
   const dispatch = useDispatch();
 
   const joinRoomForPayment = (paymentIntentId) => {
-    ref.current?.emit("join_p_room", {
-        paymentIntentId: paymentIntentId
+    ref.current?.emit('join_p_room', {
+      paymentIntentId,
     }, (response) => {
-        console.log("server join payment room response", response); 
+      console.log('server join payment room response', response);
     });
-  }
+  };
 
   useEffect(() => {
     if (!enabled) {
@@ -26,22 +26,22 @@ export const useClientSocket = ({paymentIntentId, enabled }) => {
       console.log('disconnected');
     });
 
-    socket.on("connect", () => {
-        console.log("socket id:", socket.id)
+    socket.on('connect', () => {
+      console.log('socket id:', socket.id);
 
-        const engine = socket.io.engine;
-        console.log("transport before upgrade:", engine.transport.name)
+      const { engine } = socket.io;
+      console.log('transport before upgrade:', engine.transport.name);
 
-        engine.once("upgrade", () => {
-           console.log("transport after upgrade:", engine.transport.name)
-            console.log("PAYMENT", paymentIntentId);
-        })
-       
-        if (paymentIntentId) {
-          console.log("joining room for paymentIntentId:", paymentIntentId);
-          joinRoomForPayment(paymentIntentId);
-        }
-    })
+      engine.once('upgrade', () => {
+        console.log('transport after upgrade:', engine.transport.name);
+        console.log('PAYMENT', paymentIntentId);
+      });
+
+      if (paymentIntentId) {
+        console.log('joining room for paymentIntentId:', paymentIntentId);
+        joinRoomForPayment(paymentIntentId);
+      }
+    });
 
     socket.on('reconnect', () => {
       if (paymentIntentId) {
@@ -55,12 +55,12 @@ export const useClientSocket = ({paymentIntentId, enabled }) => {
       console.log('message:', message);
     });
 
-    // FROM SERVER:STRIPE: announcements for customer 
+    // FROM SERVER:STRIPE: announcements for customer
     socket.on('p_intent', (payload) => {
-        setTimeout(() => {
-            console.log("Your payment was successful", payload);
-            dispatch(confirmPayment(payload));
-        }, 3000);
+      setTimeout(() => {
+        console.log('Your payment was successful', payload);
+        dispatch(confirmPayment(payload));
+      }, 3000);
     });
 
     ref.current = socket;
@@ -69,5 +69,5 @@ export const useClientSocket = ({paymentIntentId, enabled }) => {
     return () => socket.disconnect();
   }, [enabled, paymentIntentId]);
 
-  return [joinRoomForPayment]
+  return [joinRoomForPayment];
 };

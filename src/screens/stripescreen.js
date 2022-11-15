@@ -1,6 +1,4 @@
 export default function CheckoutScreen() {
-  
-
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
 
@@ -11,8 +9,10 @@ export default function CheckoutScreen() {
         'Content-Type': 'application/json',
       },
     });
-    const { paymentIntentId, paymentIntent, ephemeralKey, customer } = await response.json();
-    joinRoomForPayment(paymentIntentId)
+    const {
+      paymentIntentId, paymentIntent, ephemeralKey, customer,
+    } = await response.json();
+    joinRoomForPayment(paymentIntentId);
 
     return {
       paymentIntent,
@@ -38,7 +38,7 @@ export default function CheckoutScreen() {
     }
   };
 
- const openPaymentSheet = async () => {
+  const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet({ clientSecret });
 
     if (error) {

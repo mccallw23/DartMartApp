@@ -1,29 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 import {
   Text,
   View,
   Dimensions,
   TextInput,
   TouchableOpacity,
-} from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomePage from "../screens/homePage";
-import Splash from "../screens/splashLogIn/splash";
-import CartPage from "../screens/cartPage";
-import Shop from "../screens/shop";
-import DeliveryPage from "../screens/DeliveryPage";
-import ProfilePage from "../screens/profilePage";
-import DriverView from "../screens/DriverView";
-import { Ionicons } from "@expo/vector-icons";
-import { connect, useSelector } from "react-redux";
-import { fetchOrders } from "../actions/index";
-import { useFonts } from "expo-font";
-import AppLoading from "expo-app-loading";
-import { useClientSocket } from "../components/clientSocket";
-import styled from "styled-components/native";
+} from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import { connect, useSelector } from 'react-redux';
+import { useFonts } from 'expo-font';
+import AppLoading from 'expo-app-loading';
+import styled from 'styled-components/native';
+import HomePage from '../screens/homePage';
+import Splash from '../screens/splashLogIn/splash';
+import CartPage from '../screens/cartPage';
+import Shop from '../screens/shop';
+import DeliveryPage from '../screens/DeliveryPage';
+import ProfilePage from '../screens/profilePage';
+import DriverView from '../screens/DriverView';
+import { fetchOrders } from '../actions/index';
+import { useClientSocket } from '../components/clientSocket';
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const Wrapper = styled.View`
   width: 24;
@@ -58,11 +58,11 @@ function MainTabBar(props) {
   const user = useSelector((state) => state.user.user);
   const order = useSelector((state) => state.item.cart);
 
-  console.log("Cart Contents", order);
-  //console.log("ZZZZZZ", order)
+  console.log('Cart Contents', order);
+  // console.log("ZZZZZZ", order)
 
-  let [themeFontLoad] = useFonts({
-    Poppins: require("../assets/fonts/Poppins-Medium.ttf"),
+  const [themeFontLoad] = useFonts({
+    Poppins: '../assets/fonts/Poppins-Medium.ttf',
   });
 
   if (!themeFontLoad) {
@@ -71,29 +71,29 @@ function MainTabBar(props) {
   }
 
   const logout = () => {
-    props.navigation.navigate("Logout");
+    props.navigation.navigate('Logout');
   };
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
           height: windowHeight * 0.1,
-          backgroundColor: "#02604E",
-          position: "absolute",
+          backgroundColor: '#02604E',
+          position: 'absolute',
         },
-        tabBarActiveTintColor: "white",
-        tabBarInactiveTintColor: "black",
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: 'black',
         headerStyle: {
-          backgroundColor: "#BBDDBB",
+          backgroundColor: '#BBDDBB',
           height: windowHeight * 0.15,
         },
-        headerTitleAlign: "left",
-        headerTitle: "Dartmart",
+        headerTitleAlign: 'left',
+        headerTitle: 'Dartmart',
         headerTitleStyle: {
           marginLeft: 30,
           fontSize: 30,
-          color: "#02604E",
-          fontFamily: "Poppins",
+          color: '#02604E',
+          fontFamily: 'Poppins',
         },
       }}
     >
@@ -103,7 +103,7 @@ function MainTabBar(props) {
           component={Shop}
           options={{
             headerShown: false,
-            tabBarLabel: "Home",
+            tabBarLabel: 'Home',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="home" color={color} size={size} />
             ),
@@ -118,7 +118,7 @@ function MainTabBar(props) {
             component={CartPage}
             options={{
               headerShown: false,
-              tabBarLabel: "Cart",
+              tabBarLabel: 'Cart',
               tabBarIcon: ({ color, size }) => (
                 <Wrapper>
                   <Ionicons name="cart" color={color} size={size} />
@@ -135,7 +135,7 @@ function MainTabBar(props) {
             component={CartPage}
             options={{
               headerShown: false,
-              tabBarLabel: "Cart",
+              tabBarLabel: 'Cart',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="cart" color={color} size={size} />
               ),
@@ -149,7 +149,7 @@ function MainTabBar(props) {
           name="Delivery"
           component={DeliveryPage}
           options={{
-            tabBarLabel: "Delivery",
+            tabBarLabel: 'Delivery',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="pizza" color={color} size={size} />
             ),
@@ -160,21 +160,21 @@ function MainTabBar(props) {
       <Tab.Screen
         name="Profile"
         component={ProfilePage}
-        initialParams={{ logout: logout }}
+        initialParams={{ logout }}
         options={{
-          tabBarLabel: "Profile",
+          tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-circle-outline" color={color} size={size} />
           ),
         }}
       />
-      
+
       {user?.isDriver === true ? (
         <Tab.Screen
           name="Driver"
           component={DriverView}
           options={{
-            tabBarLabel: "Driver",
+            tabBarLabel: 'Driver',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="bicycle-outline" color={color} size={size} />
             ),

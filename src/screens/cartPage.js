@@ -1,39 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, TextInput   } from 'react-native';
+import {
+  ActivityIndicator, TextInput,
+  StyleSheet, Text, Image, View, TouchableOpacity, Dimensions, ScrollView, Modal, Pressable, Button, Alert,
+} from 'react-native';
 import { connect, useSelector } from 'react-redux';
-import { StyleSheet, Text, Image, View, TouchableOpacity, Dimensions, ScrollView, Modal, Pressable, Button, Alert} from 'react-native';
-import { CardField, retrievePaymentIntent, useStripe} from '@stripe/stripe-react-native';
-import { addItem, submitOrder, removeItem, confirmPayment } from '../actions/index';
-import axios from "axios";
-import { Ionicons } from "@expo/vector-icons";
+import { CardField, retrievePaymentIntent, useStripe } from '@stripe/stripe-react-native';
+import axios from 'axios';
+import { Ionicons } from '@expo/vector-icons';
+import {
+  addItem, submitOrder, removeItem, confirmPayment,
+} from '../actions/index';
 import {
   ROUTE_PAYMENT_SHEET,
   SERVER_URL_HEROKU,
   LIVE_STRIPE_SERVER,
-} from "../Constants";
+} from '../Constants';
 import { useClientSocket } from '../components/clientSocket';
+
 const devPerms = true;
 
-function CartPage(props){
-    const [joinRoomForPayment] = useClientSocket({
-        enabled: true
-    })
-    const [paymentSubmitted, setPaymentSubmitted] = useState(false);
+function CartPage(props) {
+  const [joinRoomForPayment] = useClientSocket({
+    enabled: true,
+  });
+  const [paymentSubmitted, setPaymentSubmitted] = useState(false);
 
-    const paymentConfirmed = useSelector((state) => state.payment.paymentConfirmed);
-    console.log("paymentConfirmed:", paymentConfirmed);
-    const user = useSelector(state => state.user.user);
-    const cart = useSelector((state) => state.item.cart);
+  const paymentConfirmed = useSelector((state) => state.payment.paymentConfirmed);
+  console.log('paymentConfirmed:', paymentConfirmed);
+  const user = useSelector((state) => state.user.user);
+  const cart = useSelector((state) => state.item.cart);
 
-    const [modalVisible, setModalVisible] = useState(false); 
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [tempQuantity, setTempQuantity] = useState(1);
-    const [cartTotal, setCartTotal] = useState(0);
-    const [fees, setFees] = useState(0);
-    const [sum, setSum] = useState(0);
-    const [address, setAddress] = useState(null);
-   
-    const { initPaymentSheet, presentPaymentSheet} = useStripe();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [tempQuantity, setTempQuantity] = useState(1);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [fees, setFees] = useState(0);
+  const [sum, setSum] = useState(0);
+  const [address, setAddress] = useState(null);
+
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const fetchPaymentSheetParams = async () => {
     const response = await axios.post(
@@ -41,14 +46,16 @@ function CartPage(props){
       {
         amount: cartTotal,
         stripeId: user.stripeId,
-      }
+      },
     );
     // const { paymentIntentId, paymentIntent, ephemeralKey, customer } = response.data;
-    const { paymentIntentId, paymentIntent, ephemeralKey, customer } = response.data;
-    console.log("eiuhieufhiweufhiseufhsei9 \n")
+    const {
+      paymentIntentId, paymentIntent, ephemeralKey, customer,
+    } = response.data;
+    console.log('eiuhieufhiweufhiseufhsei9 \n');
     console.log(paymentIntentId, ephemeralKey, customer);
-    console.log("\npaymentIntentId8888888:", paymentIntentId);
-    joinRoomForPayment(paymentIntentId)
+    console.log('\npaymentIntentId8888888:', paymentIntentId);
+    joinRoomForPayment(paymentIntentId);
 
     return {
       paymentIntent,
@@ -58,7 +65,7 @@ function CartPage(props){
   };
 
   const initializePaymentSheet = async () => {
-      console.log("initializePaymentSheet");
+    console.log('initializePaymentSheet');
     const {
       paymentIntent,
       ephemeralKey,
@@ -69,245 +76,251 @@ function CartPage(props){
       customerId: customer,
       customerEphemeralKeySecret: ephemeralKey,
       paymentIntentClientSecret: paymentIntent,
-    });;
+    });
     if (error) {
-        console.log('error found:', error)
+      console.log('error found:', error);
     }
   };
 
-   const openPaymentSheet = async () => {
-       if(cart.length > 0){
-           const cartInfo = {
-            customerId: user.id,
-            orderItems: cart,
-            status: "queued",
-            orderPaymentAmount: cartTotal
-           }
-        //    console.log('cartPage.js || openPaymentSheet || cartInfo:', cartInfo);
-        //    props.submitOrder({
-        //        customerId: user.id,
-        //        orderItems: cart,
-        //        status: "queued",
-        //        orderPaymentAmount: cartTotal
-        //    })
-       
-        // if the time is not between 7 PM and 11:59 PM
-        if ((new Date().getHours() < 19 || new Date().getHours() > 23 && new Date().getMinutes() > 59) && devPerms === false) {
-            Alert.alert("Sorry, we are closed for the day. Please come back tomorrow between 7 PM and 11:59 PM.")
-        }
-        //otherwise, if address is not set, or is below 5 characters, alert the user to set a valid address
-        else if(address == null || address == "" || address.length < 5){
-            Alert.alert(
-                "Address not set",
-                "Please set a valid address.",
-                [
-                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                ]
-            );
-        }
-        else
-        {
-        console.log("address: ", address);
+  const openPaymentSheet = async () => {
+    if (cart.length > 0) {
+      const cartInfo = {
+        customerId: user.id,
+        orderItems: cart,
+        status: 'queued',
+        orderPaymentAmount: cartTotal,
+      };
+      //    console.log('cartPage.js || openPaymentSheet || cartInfo:', cartInfo);
+      //    props.submitOrder({
+      //        customerId: user.id,
+      //        orderItems: cart,
+      //        status: "queued",
+      //        orderPaymentAmount: cartTotal
+      //    })
+
+      // if the time is not between 7 PM and 11:59 PM
+      if ((new Date().getHours() < 19 || new Date().getHours() > 23 && new Date().getMinutes() > 59) && devPerms === false) {
+        Alert.alert('Sorry, we are closed for the day. Please come back tomorrow between 7 PM and 11:59 PM.');
+      }
+      // otherwise, if address is not set, or is below 5 characters, alert the user to set a valid address
+      else if (address == null || address == '' || address.length < 5) {
+        Alert.alert(
+          'Address not set',
+          'Please set a valid address.',
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+        );
+      } else {
+        console.log('address: ', address);
         const initialize = await initializePaymentSheet();
-        const {clientSecret, errorWhatever} = await fetchPaymentIntentClientSecret();
+        const { clientSecret, errorWhatever } = await fetchPaymentIntentClientSecret();
         const { error } = await presentPaymentSheet({ clientSecret, confirmPayment: false });
-        
 
         if (error) {
-            Alert.alert(`Error code: ${error.code}`, error.message);
+          Alert.alert(`Error code: ${error.code}`, error.message);
         } else {
-                  //Handle successful payment here
-                  props.submitOrder({
-                    customerId: user.id,
-                    orderItems: cart,
-                    status: "queued",
-                    orderPaymentAmount: cartTotal,
-                    address: address
-                    })
-                    setPaymentSubmitted(true);
-                }
-        } 
-    }
-        else {
-            Alert.alert('Hold on!', 'Your cart is empty!');
+          // Handle successful payment here
+          props.submitOrder({
+            customerId: user.id,
+            orderItems: cart,
+            status: 'queued',
+            orderPaymentAmount: cartTotal,
+            address,
+          });
+          setPaymentSubmitted(true);
         }
+      }
+    } else {
+      Alert.alert('Hold on!', 'Your cart is empty!');
+    }
   };
- 
+
   useEffect(() => {
-    var tempSum = 0;
-        cart.forEach(({item, quantity}) => {
-            tempSum += quantity * item.cost;
-        })
-        setSum(Math.round(tempSum * 100) / 100);
-        setFees(Math.round((tempSum * .05 + 1.99) * 100) / 100)
-        setCartTotal(Math.round((tempSum + fees) * 100))
+    let tempSum = 0;
+    cart.forEach(({ item, quantity }) => {
+      tempSum += quantity * item.cost;
+    });
+    setSum(Math.round(tempSum * 100) / 100);
+    setFees(Math.round((tempSum * 0.05 + 1.99) * 100) / 100);
+    setCartTotal(Math.round((tempSum + fees) * 100));
   }, []);
 
   // this useEffect is for when the payment is confirmed
   // it will reset the cart and set the paymentConfirmed to false
   useEffect(() => {
     if (paymentConfirmed) {
-        Alert.alert('Payment confirmed! Your order has been created!');
-        props.navigation.navigate('Delivery')
+      Alert.alert('Payment confirmed! Your order has been created!');
+      props.navigation.navigate('Delivery');
     }
-    
+
     return () => {
-        props.confirmPayment(false);
-    }}, [paymentConfirmed]);
+      props.confirmPayment(false);
+    };
+  }, [paymentConfirmed]);
 
+  const fetchSuccessCode = async () => {
+    const response = axios.post(`${LIVE_STRIPE_SERVER}/payment-success`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // const {success} = await response.json();
+    console.log('client secret: ', success);
+    return success;
+  };
 
-    const fetchSuccessCode = async () => 
-    {
-        const response = axios.post(`${LIVE_STRIPE_SERVER}/payment-success`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        // const {success} = await response.json();
-        console.log("client secret: ", success);
-        return success;
-    }
+  const fetchPaymentIntentClientSecret = async () => {
+    const response = await axios.post(
+      `${LIVE_STRIPE_SERVER}/create-payment-intent`,
+      {
+        amount: cartTotal,
+      },
+    );
+    console.log('response', response.data);
+    const { clientSecret, error } = response.data;
+    console.log('client secret: ', clientSecret);
+    return { clientSecret, error };
+  };
 
-    const fetchPaymentIntentClientSecret = async () => 
-    {
-        const response = await axios.post(
-          `${LIVE_STRIPE_SERVER}/create-payment-intent`,
-          {
-            amount: cartTotal,
-          }
-        );
-        console.log('response', response.data);
-        const {clientSecret, error} = response.data;
-        console.log("client secret: ", clientSecret);
-        return {clientSecret, error};
-    }
-    
+  useEffect(() => {
+    setTempQuantity(1);
+  }, [modalVisible]);
 
+  useEffect(() => {
+    let tempSum = 0;
+    cart.forEach(({ item, quantity }) => {
+      tempSum += quantity * item.cost;
+    });
+    setSum(Math.round(tempSum * 100) / 100);
+  }, [cart]);
 
-    useEffect(() => {
-        setTempQuantity(1);
-    }, [modalVisible])
+  useEffect(() => {
+    setFees(Math.round((sum * 0.05 + 1.99) * 100) / 100);
+  }, [sum]);
 
-    useEffect(() => {
-        var tempSum = 0;
-        cart.forEach(({item, quantity}) => {
-            tempSum += quantity * item.cost;
-        })
-        setSum(Math.round(tempSum * 100) / 100);
-    }, [cart])
+  useEffect(() => {
+    setCartTotal(Math.round((sum + fees) * 100));
+  }, [fees]);
 
-    useEffect(() => {
-        setFees(Math.round((sum * .05 + 1.99) * 100) / 100)
-    }, [sum])
-
-    useEffect(() => {
-        setCartTotal(Math.round((sum + fees) * 100))
-    }, [fees])
-
-    if (paymentSubmitted && !paymentConfirmed) {
-        return (
-            <>
-            <View style={styles.container}>
-                <Text
-                    style={styles.featuredText}
-                >Waiting for Payment confirmation</Text>
-            </View>
-            <View style={{
-                flex: 1,
-                justifyContent: 'center',
-            }}> 
-                <ActivityIndicator size="large" color="green" />
-            </View>
-            </>
-        )
-    }
+  if (paymentSubmitted && !paymentConfirmed) {
     return (
-        <View backgroundColor='#02604E' style={{height: windowHeight * .9}}>
-            {/* SCROLL VIEW FOR ITEMS IN CART */}
-            <Text style={styles.featuredText}>Shopping Cart</Text>
-            <ScrollView contentContainerStyle={styles.itemsContainer}>
-                {/* text entry space for a delivery address */}
-                <View style={styles.addressContainer}>
-                    <Text style={styles.addressText}> Enter Your Delivery Address:</Text>
-                    <TextInput
-                        style={styles.addressInput}
-                        placeholder='Enter your address'
-                        placeholderTextColor='white'
-                        onChangeText={text => setAddress(text)}
-                        value={address}
-                    />
-                    <Text>*** address must be within 1.5 miles of Dartmouth college ***</Text>
-                </View>
-                {/* <View style={styles.itemsContainer}> */}
-                    {cart.map(({item, quantity}) => {
-                        return (
-                            <View key={item.name} style={styles.itemContainer}>
-                                {/* <View style={styles.imageContainer}>
+      <>
+        <View style={styles.container}>
+          <Text
+            style={styles.featuredText}
+          >
+            Waiting for Payment confirmation
+          </Text>
+        </View>
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+        }}
+        >
+          <ActivityIndicator size="large" color="green" />
+        </View>
+      </>
+    );
+  }
+  return (
+    <View backgroundColor="#02604E" style={{ height: windowHeight * 0.9 }}>
+      {/* SCROLL VIEW FOR ITEMS IN CART */}
+      <Text style={styles.featuredText}>Shopping Cart</Text>
+      <ScrollView contentContainerStyle={styles.itemsContainer}>
+        {/* text entry space for a delivery address */}
+        <View style={styles.addressContainer}>
+          <Text style={styles.addressText}> Enter Your Delivery Address:</Text>
+          <TextInput
+            style={styles.addressInput}
+            placeholder="Enter your address"
+            placeholderTextColor="white"
+            onChangeText={(text) => setAddress(text)}
+            value={address}
+          />
+          <Text>*** address must be within 1.5 miles of Dartmouth college ***</Text>
+        </View>
+        {/* <View style={styles.itemsContainer}> */}
+        {cart.map(({ item, quantity }) => {
+          return (
+            <View key={item.name} style={styles.itemContainer}>
+              {/* <View style={styles.imageContainer}>
                                     <
                                 </View> */}
-                                <View style={styles.imageContainer}>
-                                    <Image source={{uri: item.imageURL}} style={styles.image} />
-                                </View>
-                                <View style={styles.itemInfoContainer}>
-                                    <View style={styles.itemNameContainer}>
-                                        <Text style={styles.itemName}>{item.name}</Text>
-                                    </View>
-
-
-                                    <View style= {styles.costAndQuantity}>
-                                        <View style = {styles.itemCostContainer}>
-                                            <Text style={styles.itemCost}>${Math.round((item.cost * quantity) * 100) / 100}</Text>
-                                        </View>
-                                        <View style={styles.quantityContainer}>
-                                            <TouchableOpacity style={styles.quantityButton} onPress={()=> {if(quantity > 0) props.addItem(item, -1)}}>
-                                                <Text style={styles.quantitySymbol}>-</Text>
-                                            </TouchableOpacity>    
-                                            <Text style={styles.text1}>{quantity}</Text>
-                                            <TouchableOpacity style={styles.quantityButton} onPress={()=>props.addItem(item, 1)}>
-                                                <Text style={styles.quantitySymbol}>+</Text>
-                                            </TouchableOpacity> 
-                                        </View>
-                                    </View>
-                                </View>
-                                <Pressable style={{position: 'absolute', top: 10, right: 10}} onPress={() => {props.removeItem(item)}}>
-                                    <Ionicons name="close" size={25}/>
-                                </Pressable>
-                            </View>
-                        )
-                    })}
-                {/* </View> */}
-            </ScrollView>
-
-            <View style={styles.checkoutInfo}>
-                <View>
-                    <View>
-                        <View style={styles.subtotal}>
-                            <View style={styles.costLine}>
-                                <Text style={styles.text2}>Cart Total</Text>
-                                <Text style={styles.text2}>${sum}</Text>
-                            </View>
-                            <View style={styles.costLine}>
-                                <Text style={styles.text2}>Tax and Fees</Text>
-                                <Text style={styles.text2}>${fees}</Text>
-                            </View>
-                            <View style={styles.costLine}>
-                                <Text style={styles.text2}>Tips</Text>
-                                <Text style={styles.text2}>$0</Text>
-                            </View>
-                        </View>
-                    </View>
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: item.imageURL }} style={styles.image} />
+              </View>
+              <View style={styles.itemInfoContainer}>
+                <View style={styles.itemNameContainer}>
+                  <Text style={styles.itemName}>{item.name}</Text>
                 </View>
 
-                <View style={styles.dividerLine}>
-                    <Text style={styles.text1} justifyContent='center' ></Text>
+                <View style={styles.costAndQuantity}>
+                  <View style={styles.itemCostContainer}>
+                    <Text style={styles.itemCost}>
+                      $
+                      {Math.round((item.cost * quantity) * 100) / 100}
+                    </Text>
+                  </View>
+                  <View style={styles.quantityContainer}>
+                    <TouchableOpacity style={styles.quantityButton} onPress={() => { if (quantity > 0) props.addItem(item, -1); }}>
+                      <Text style={styles.quantitySymbol}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.text1}>{quantity}</Text>
+                    <TouchableOpacity style={styles.quantityButton} onPress={() => props.addItem(item, 1)}>
+                      <Text style={styles.quantitySymbol}>+</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.subtotal}>
-                    <View style={styles.costLine}>
-                        <Text style={styles.text2}>Total</Text>
-                        <Text style={styles.text2}>${cartTotal / 100}</Text>
-                    </View>
-                    {/* <CardField
+              </View>
+              <Pressable style={{ position: 'absolute', top: 10, right: 10 }} onPress={() => { props.removeItem(item); }}>
+                <Ionicons name="close" size={25} />
+              </Pressable>
+            </View>
+          );
+        })}
+        {/* </View> */}
+      </ScrollView>
+
+      <View style={styles.checkoutInfo}>
+        <View>
+          <View>
+            <View style={styles.subtotal}>
+              <View style={styles.costLine}>
+                <Text style={styles.text2}>Cart Total</Text>
+                <Text style={styles.text2}>
+                  $
+                  {sum}
+                </Text>
+              </View>
+              <View style={styles.costLine}>
+                <Text style={styles.text2}>Tax and Fees</Text>
+                <Text style={styles.text2}>
+                  $
+                  {fees}
+                </Text>
+              </View>
+              <View style={styles.costLine}>
+                <Text style={styles.text2}>Tips</Text>
+                <Text style={styles.text2}>$0</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.dividerLine}>
+          <Text style={styles.text1} justifyContent="center" />
+        </View>
+        <View style={styles.subtotal}>
+          <View style={styles.costLine}>
+            <Text style={styles.text2}>Total</Text>
+            <Text style={styles.text2}>
+              $
+              {cartTotal / 100}
+            </Text>
+          </View>
+          {/* <CardField
         postalCodeEnabled={true}
         placeholders={{
           number: '4242 4242 4242 4242',
@@ -328,12 +341,12 @@ function CartPage(props){
           console.log('focusField', focusedField);
         }}
       /> */}
-                </View>
-                
-                <TouchableOpacity key="uniqueId1" style={styles.checkOutButton} onPress={openPaymentSheet}>
-                  <Text style={styles.text1} justifyContent='center'>Check Out</Text>
-                </TouchableOpacity>
-                 {/* <CardField 
+        </View>
+
+        <TouchableOpacity key="uniqueId1" style={styles.checkOutButton} onPress={openPaymentSheet}>
+          <Text style={styles.text1} justifyContent="center">Check Out</Text>
+        </TouchableOpacity>
+        {/* <CardField
                   postalCodeEnabled={true}
                     cardStyle={styles.card}
                     style={styles.cardContainer}
@@ -343,236 +356,238 @@ function CartPage(props){
                     }}
                   /> */}
 
-                  {/* <TouchableOpacity key="uniqueId1" style={styles.checkOutButton} onPress={openPaymentSheet}>
+        {/* <TouchableOpacity key="uniqueId1" style={styles.checkOutButton} onPress={openPaymentSheet}>
                   <Text style={styles.text1} justifyContent='center'>Submit Order</Text>
                 </TouchableOpacity> */}
-                  
-            </View>
-        </View>
-        
-    );
+
+      </View>
+    </View>
+
+  );
 }
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-    card:
+  card:
     {
-        backgroundColor: '#efefefef',
+      backgroundColor: '#efefefef',
     },
-    addressContainer:
+  addressContainer:
     {
-        backgroundColor: '#02604E',
-        width: windowWidth * .9,
-        height: windowHeight * .1,
-        borderRadius: 10,
-        margin: 10,
-        padding: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
+      backgroundColor: '#02604E',
+      width: windowWidth * 0.9,
+      height: windowHeight * 0.1,
+      borderRadius: 10,
+      margin: 10,
+      padding: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
 
-    addressInput:
+  addressInput:
     {
-        backgroundColor: '#02604E',
-        width: windowWidth * .8,
-        height: windowHeight * .05,
-        borderRadius: 10,
-        margin: 10,
-        padding: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: 'white',
+      backgroundColor: '#02604E',
+      width: windowWidth * 0.8,
+      height: windowHeight * 0.05,
+      borderRadius: 10,
+      margin: 10,
+      padding: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      color: 'white',
     },
 
-    addressText:
+  addressText:
     {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
+      color: 'white',
+      fontSize: 20,
+      fontWeight: 'bold',
     },
-    cardContainer:
+  cardContainer:
     {
-        height: 50,
-        marginVertical: 30,
+      height: 50,
+      marginVertical: 30,
 
     },
 
-    text1: {
-        color: 'black',
-        fontSize: 18,
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    text2: {
-        color: 'black',
-        fontSize: 20,
-        fontWeight: 'normal',
-      },
-    container: {
-        margin: 0,
-        padding: 0,
-        alignItems: 'center',
-        width: windowWidth,
-        backgroundColor: '#02604E',
-        borderRadius: 30,
-    },
-    featuredText: {
-        color: 'white',
-        fontSize: 30,
-        paddingBottom: 10,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        paddingTop: windowHeight * .05,
-    },
-    itemsContainer:{
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        marginTop: 30,
-        paddingBottom: 30,
-    },
-    image:{
-        width: '100%',
-        height: '100%',
-        borderRadius: 18
-    },  
-    itemContainer:{
-        flexDirection:'row',
-        justifyContent: 'space-between',
-        width: windowWidth * .95,
-        margin: windowWidth * .025,
-        borderRadius: 10,
-        height: windowWidth * .35,
-        backgroundColor: '#BBDDBB',
-        padding: 10,
-    },
-    imageContainer:{
-        borderRadius: 18,
-        justifyContent: 'center',
-        alignSelf: 'center',
-        width: windowWidth * .25,
-        height: windowWidth * .25,
-        backgroundColor:'white',
-    },
-    itemInfoContainer:{
-        // alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        width: windowWidth * .7 - 20,
-    },
-    itemNameContainer:{
-        width: '80%',
-        alignSelf: 'flex-start',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-    },
-    itemName: {
-        // width: '80%',
-        color: 'black',
-        fontSize: 18,
-        padding: 10,
-        fontWeight: 'bold',
-        // alignSelf: 'baseline',
-        // overflow: 'hidden'
-    },
-    costAndQuantity : {
-        flexDirection: 'row',
-        alignSelf: 'flex-end',
-        width: '100%',
-        // alignItems:'flex-end',
-        justifyContent: 'space-between'
-    },
-    itemCostContainer: {
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 0,
-    },
-    itemCost: {
-        fontSize: 20,
-        alignSelf: 'center',
-        color: '#02604E',
-        fontWeight: 'bold',
-    },
-    removeItemText:{
-        fontSize: 25, 
-    },
-    itemModal:{
-        height: 350,
-        width: windowWidth * .8,
-        marginHorizontal: windowWidth * .1,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        borderRadius: 30,
-        alignItems:'center',
-        marginBottom: windowHeight * .25,
-        marginTop: windowHeight * .25,
-    },
-    quantityContainer: {
-        height: 40,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        borderRadius: 20
-    },
-    quantityButton : {
-        width: 30,
-        height: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 15,
-        backgroundColor: 'white',
-        margin: 5
-        },
-    quantitySymbol : {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: 'black'
-    },
-    checkoutInfo : {
-        width: windowWidth,
-        borderRadius: 22,
-        padding: 20,
-        height: windowHeight * .25,
-        paddingTop: 10,
-        backgroundColor: 'white',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        opacity: 0.9,
-        paddingRight: 30,
-    },
-    subtotal :{
-        marginBottom: 20,
-        paddingLeft: 10,
-        width: windowWidth* 0.95,
-    },  
-    dividerLine : {
-        backgroundColor: 'grey',
-        width: windowWidth* 0.9,
-        height: 3,
-        borderRadius: 10,
-        opacity: 0.5
-    },
-    costLine : {
-        display: 'flex',
-        flexDirection:'row',
-        justifyContent:'space-between',
-    },
-    checkOutButton: {
-        width: windowWidth*.9,
-        alignContent: 'center',
-        justifyContent: 'center',
-        opacity: 12,
-        borderRadius: 12,
-        paddingVertical: 10,
-        paddingHorizontal: 33,
-        backgroundColor: '#BBDDBB',
-      },
+  text1: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text2: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: 'normal',
+  },
+  container: {
+    margin: 0,
+    padding: 0,
+    alignItems: 'center',
+    width: windowWidth,
+    backgroundColor: '#02604E',
+    borderRadius: 30,
+  },
+  featuredText: {
+    color: 'white',
+    fontSize: 30,
+    paddingBottom: 10,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingTop: windowHeight * 0.05,
+  },
+  itemsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 30,
+    paddingBottom: 30,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 18,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: windowWidth * 0.95,
+    margin: windowWidth * 0.025,
+    borderRadius: 10,
+    height: windowWidth * 0.35,
+    backgroundColor: '#BBDDBB',
+    padding: 10,
+  },
+  imageContainer: {
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: windowWidth * 0.25,
+    height: windowWidth * 0.25,
+    backgroundColor: 'white',
+  },
+  itemInfoContainer: {
+    // alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: windowWidth * 0.7 - 20,
+  },
+  itemNameContainer: {
+    width: '80%',
+    alignSelf: 'flex-start',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  itemName: {
+    // width: '80%',
+    color: 'black',
+    fontSize: 18,
+    padding: 10,
+    fontWeight: 'bold',
+    // alignSelf: 'baseline',
+    // overflow: 'hidden'
+  },
+  costAndQuantity: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+    width: '100%',
+    // alignItems:'flex-end',
+    justifyContent: 'space-between',
+  },
+  itemCostContainer: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 0,
+  },
+  itemCost: {
+    fontSize: 20,
+    alignSelf: 'center',
+    color: '#02604E',
+    fontWeight: 'bold',
+  },
+  removeItemText: {
+    fontSize: 25,
+  },
+  itemModal: {
+    height: 350,
+    width: windowWidth * 0.8,
+    marginHorizontal: windowWidth * 0.1,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    borderRadius: 30,
+    alignItems: 'center',
+    marginBottom: windowHeight * 0.25,
+    marginTop: windowHeight * 0.25,
+  },
+  quantityContainer: {
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 20,
+  },
+  quantityButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    backgroundColor: 'white',
+    margin: 5,
+  },
+  quantitySymbol: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  checkoutInfo: {
+    width: windowWidth,
+    borderRadius: 22,
+    padding: 20,
+    height: windowHeight * 0.25,
+    paddingTop: 10,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    opacity: 0.9,
+    paddingRight: 30,
+  },
+  subtotal: {
+    marginBottom: 20,
+    paddingLeft: 10,
+    width: windowWidth * 0.95,
+  },
+  dividerLine: {
+    backgroundColor: 'grey',
+    width: windowWidth * 0.9,
+    height: 3,
+    borderRadius: 10,
+    opacity: 0.5,
+  },
+  costLine: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  checkOutButton: {
+    width: windowWidth * 0.9,
+    alignContent: 'center',
+    justifyContent: 'center',
+    opacity: 12,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 33,
+    backgroundColor: '#BBDDBB',
+  },
 });
 
-export default connect(null, { addItem, removeItem, submitOrder, confirmPayment })(CartPage);
+export default connect(null, {
+  addItem, removeItem, submitOrder, confirmPayment,
+})(CartPage);

@@ -1,6 +1,6 @@
 {
     "extends": "airbnb",
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "env": {
         "node": true,
         "browser": true,
@@ -8,35 +8,84 @@
     },
     "rules": {
         "strict": 0,
-        "quotes": [2, "single"],
+        "quotes": [
+            2,
+            "single"
+        ],
         "no-else-return": 0,
         "new-cap": 0,
         "no-console": 0,
-        "import/no-unresolved": [2, { "caseSensitive": false } ],
-        "no-unused-vars": ["error", { "vars": "all", "args": "none" }],
+        "import/no-unresolved": [
+            2,
+            {
+                "caseSensitive": false
+            }
+        ],
         "no-underscore-dangle": 0,
         "arrow-body-style": 0,
-        "one-var": ["error", { "uninitialized": "always", "initialized": "never" }],
-        "one-var-declaration-per-line": ["error", "initializations"],
+        "one-var": [
+            "error",
+            {
+                "uninitialized": "always",
+                "initialized": "never"
+            }
+        ],
+        "one-var-declaration-per-line": [
+            "error",
+            "initializations"
+        ],
         "max-len": 0,
         "no-extra-parens": 0,
         "no-plusplus": 0,
         "no-restricted-syntax": [
-          0,
-          "DebuggerStatement"
+            0,
+            "DebuggerStatement"
         ],
         "no-debugger": 1,
         "react/jsx-uses-react": 2,
         "react/jsx-uses-vars": 2,
-        "react/react-in-jsx-scope": 2,
         "react/prop-types": 0,
         "react/jsx-first-prop-new-line": 0,
         "react/jsx-filename-extension": 0,
         "react/prefer-stateless-function": 0,
         "prefer-destructuring": 1,
         "class-methods-use-this": 0,
-        "no-use-before-define": [2, { "variables": false }],
-        "import/no-extraneous-dependencies": 0
+        "no-use-before-define": [
+            2,
+            {
+                "variables": false
+            }
+        ],
+        "import/no-extraneous-dependencies": 0,
+        // Added
+        "no-dupe-keys": 1,
+        "import/prefer-default-export": 1,
+        "no-shadow": 1,
+        "consistent-return": 1,
+        "react/destructuring-assignment": 1,
+        "react/jsx-no-undef": 1,
+        "react/no-unstable-nested-components": 1,
+        "no-nested-ternary": 1,
+        "vars-on-top": 1,
+        "no-var": 1,
+        "no-redeclare": 1,
+        "eqeqeq": 1,
+        "no-undef": 1,
+        "global-require": 1,
+        "no-mixed-operators": 1,
+        "react/no-this-in-sfc": 1,
+        "brace-style": 1,
+        "no-prototype-builtins": 1,
+        "array-callback-return": 1,
+        // Updated Existing Rules
+        "no-unused-vars": [
+            "warn",
+            {
+                "vars": "all",
+                "args": "none"
+            }
+        ],
+        "react/react-in-jsx-scope": 1
     },
     "plugins": [
         "react"
@@ -48,6 +97,4 @@
         }
     }
 }
-
-
-// yarn add --dev eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-react eslint-plugin-jsx-a11y babel-eslint
+//yarn add --dev eslint-config-airbnb eslint-plugin-import eslint-plugin-react eslint-plugin-jsx-a11y eslint @babel/core @babel/eslint-parser 
