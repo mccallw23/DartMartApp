@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { connect, useSelector } from 'react-redux';
 import { StyleSheet, Text, View, TouchableHighlight, Dimensions, ScrollView, Modal, Pressable, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';

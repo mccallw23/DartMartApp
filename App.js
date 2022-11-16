@@ -24,8 +24,8 @@ const Stack = createStackNavigator();
 function App(props){
   return (
     <StripeProvider
-      publishableKey={PUBLISHABLE_KEY_LIVE}
-      merchantIdentifier="DartMart LLC"
+      publishableKey='pk_live_51L2ihZH8XcWRx3ZXuYOM0SnCIwwlymCXKouDJrEPeBoWDN1D87IJ1yMWmRZENpoPwQpBLLG4B2I7Ax10NozfO3Hr00OJkBHJuz'
+      merchantIdentifier='DartMart LLC'
     >
       <Provider store={store}>
         <NavigationContainer>
@@ -36,9 +36,9 @@ function App(props){
               gestureEnabled: false,
             }}
           >
-            <Stack.Screen name="Login" component={Onboard} />
-            <Stack.Screen name="Main" component={MainTabBar} />
-            <Stack.Screen name="Logout" component={SSOLogout} />
+            <Stack.Screen name='Login' component={Onboard} />
+            <Stack.Screen name='Main' component={MainTabBar} />
+            <Stack.Screen name='Logout' component={SSOLogout} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

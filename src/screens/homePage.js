@@ -107,7 +107,7 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
       >
         <View style={styles.searchContainer}>
           <TextInput
-            placeholder="Search Dartmart"
+            placeholder='Search Dartmart'
             style={{
               backgroundColor: "white",
               width: windowWidth * 0.8,
@@ -125,6 +125,7 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
         </View>
         <View style={styles.categoryHeaderContainer}>
           <Text style={styles.categoryHeaderText}>Categories</Text>
+          <Text style={styles.categoryCaptionText}>Trader Joe's Delivered Saturdays between 2-4 PM</Text>
         </View>
         <CategorySelect
           categories={categories}
@@ -133,77 +134,14 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
         />
         {
           // if search is empty, show all items
-          search  === ""
-            ? categories.map((category) => {
-                return (
-                  <View key={category + "b"} style={styles.categoryContainer}>
-                    <View style={{ padding: 10 }}>
-                      <Text style={styles.subheader}>
-                        {category?.toUpperCase()}
-                      </Text>
-                    </View>
-                    <ScrollView
-                      horizontal={true}
-                      contentContainerStyle={styles.categoryItemScroll}
-                    >
-                      {allItems
-                        .filter(
-                          (item) => item.category === category
-                          //&& search === "" || search.length > 0 &&
-                          //item.name.toUpperCase().includes(search.toUpperCase())
-                        )
-                        .map((item) => (
-                          <ProductCard
-                            key={category + item.name}
-                            item={item}
-                            category={category}
-                            setSelectedItem={setSelectedItem}
-                            setModalVisible={setModalVisible}
-                            modalVisible={modalVisible}
-                          />
-                        ))}
-                      {TJData.filter(
-                        (item) => "Trader Joe's " + item[2] === category
-                        //&&
-                        //search === "" || search.length > 0 &&
-                        // item[1].toUpperCase().includes(search.toUpperCase())
-                      ).map((item) => {
-                        return (
-                          <TouchableHighlight
-                            key={category + item[0] + item[3]}
-                            underlayColor="transparent"
-                            onPress={() => {
-                              setSelectedItem({
-                                name: item[0],
-                                category: category,
-                                cost: item[3].slice(1),
-                                imageURL: item[6],
-                              });
-                              setModalVisible(!modalVisible);
-                            }}
-                          >
-                            <View style={styles.itemContainer}>
-                              <Text style={styles.itemName}>{item[0]}</Text>
-                              <Image
-                                source={{
-                                  uri: item[6],
-                                }}
-                                style={styles.image}
-                              />
-                              <Text style={styles.itemCost}>{item[3]}</Text>
-                            </View>
-                          </TouchableHighlight>
-                        );
-                      })}
-                    </ScrollView>
-                  </View>
-                );
-              })
-            : (
-                // create one scrollview to hold all search results
-                <View style={styles.categoryContainer}>
+          search === "" ? (
+            categories.map((category) => {
+              return (
+                <View key={category + "b"} style={styles.categoryContainer}>
                   <View style={{ padding: 10 }}>
-                    <Text style={styles.subheader}>SEARCH RESULTS</Text>
+                    <Text style={styles.subheader}>
+                      {category?.toUpperCase()}
+                    </Text>
                   </View>
                   <ScrollView
                     horizontal={true}
@@ -211,35 +149,34 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
                   >
                     {allItems
                       .filter(
-                        (item) =>
-                          search.length > 0 &&
-                            item.name
-                              .toUpperCase()
-                              .includes(search.toUpperCase())
+                        (item) => item.category === category,
+                        //&& search === "" || search.length > 0 &&
+                        //item.name.toUpperCase().includes(search.toUpperCase())
                       )
                       .map((item) => (
                         <ProductCard
-                          key={item.name}
+                          key={category + item.name}
                           item={item}
-                          category={item.category}
+                          category={category}
                           setSelectedItem={setSelectedItem}
                           setModalVisible={setModalVisible}
                           modalVisible={modalVisible}
                         />
                       ))}
                     {TJData.filter(
-                      (item) =>
-                        search.length > 0 &&
-                          item[0].toUpperCase().includes(search.toUpperCase())
+                      (item) => "Trader Joe's " + item[2] === category,
+                      //&&
+                      //search === "" || search.length > 0 &&
+                      // item[1].toUpperCase().includes(search.toUpperCase())
                     ).map((item) => {
                       return (
                         <TouchableHighlight
-                          key={item[0] + item[3]}
-                          underlayColor="transparent"
+                          key={category + item[0] + item[3]}
+                          underlayColor='transparent'
                           onPress={() => {
                             setSelectedItem({
                               name: item[0],
-                              category: "Trader Joe's " + item[2],
+                              category: category,
                               cost: item[3].slice(1),
                               imageURL: item[6],
                             });
@@ -261,14 +198,76 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
                     })}
                   </ScrollView>
                 </View>
-              )
+              );
+            })
+          ) : (
+            // create one scrollview to hold all search results
+            <View style={styles.categoryContainer}>
+              <View style={{ padding: 10 }}>
+                <Text style={styles.subheader}>SEARCH RESULTS</Text>
+              </View>
+              <ScrollView
+                horizontal={true}
+                contentContainerStyle={styles.categoryItemScroll}
+              >
+                {allItems
+                  .filter(
+                    (item) =>
+                      search.length > 0 &&
+                      item.name.toUpperCase().includes(search.toUpperCase()),
+                  )
+                  .map((item) => (
+                    <ProductCard
+                      key={item.name}
+                      item={item}
+                      category={item.category}
+                      setSelectedItem={setSelectedItem}
+                      setModalVisible={setModalVisible}
+                      modalVisible={modalVisible}
+                    />
+                  ))}
+                {TJData.filter(
+                  (item) =>
+                    search.length > 0 &&
+                    item[0].toUpperCase().includes(search.toUpperCase()),
+                ).map((item) => {
+                  return (
+                    <TouchableHighlight
+                      key={item[0] + item[3]}
+                      underlayColor='transparent'
+                      onPress={() => {
+                        setSelectedItem({
+                          name: item[0],
+                          category: "Trader Joe's " + item[2],
+                          cost: item[3].slice(1),
+                          imageURL: item[6],
+                        });
+                        setModalVisible(!modalVisible);
+                      }}
+                    >
+                      <View style={styles.itemContainer}>
+                        <Text style={styles.itemName}>{item[0]}</Text>
+                        <Image
+                          source={{
+                            uri: item[6],
+                          }}
+                          style={styles.image}
+                        />
+                        <Text style={styles.itemCost}>{item[3]}</Text>
+                      </View>
+                    </TouchableHighlight>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          )
         }
 
         <Text style={styles.subheader}>All Convenience Items</Text>
         <View style={styles.itemsContainer}>
           {allItems
             .filter((item) =>
-              item.name.toUpperCase().includes(search.toUpperCase())
+              item.name.toUpperCase().includes(search.toUpperCase()),
             )
             .map((item) => {
               return (
@@ -292,7 +291,7 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
         }}
       >
         <Modal
-          animationType="slide"
+          animationType='slide'
           visible={modalVisible}
           transparent={true}
           onRequestClose={() => setModalVisible(!modalVisible)}
@@ -308,7 +307,7 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
               style={{ position: "absolute", top: 20, right: 20 }}
               onPress={() => setModalVisible(!modalVisible)}
             >
-              <Ionicons name="close" size={25} />
+              <Ionicons name='close' size={25} />
             </Pressable>
             <View style={styles.controlContainer}>
               <View style={styles.quantityContainer}>
@@ -333,7 +332,7 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
               <Pressable onPress={() => setModalVisible(!modalVisible)}>
                 <View style={styles.submitButton}>
                   <Ionicons
-                    name="close-circle"
+                    name='close-circle'
                     size={60}
                     color={"red"}
                   ></Ionicons>
@@ -347,7 +346,7 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
               >
                 <View style={styles.discardButton}>
                   <Ionicons
-                    name="checkmark-circle"
+                    name='checkmark-circle'
                     size={60}
                     color={"green"}
                   ></Ionicons>
@@ -358,7 +357,6 @@ function HomePage({ fetchItems, addItem, setCategory, navigation }) {
         </Modal>
       </View>
     </View>
-
   );
 }
   
@@ -401,6 +399,12 @@ const styles = StyleSheet.create({
   },
   categoryHeaderText: {
     fontSize: 20,
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 20,
+  },
+  categoryCaptionText: {
+    fontSize: 10,
     color: "white",
     fontWeight: "bold",
     marginLeft: 20,

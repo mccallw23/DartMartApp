@@ -14,6 +14,7 @@ import {
 import { useClientSocket } from '../components/clientSocket';
 const devPerms = true;
 
+
 function CartPage(props){
     const [joinRoomForPayment] = useClientSocket({
         enabled: true
@@ -32,6 +33,7 @@ function CartPage(props){
     const [fees, setFees] = useState(0);
     const [sum, setSum] = useState(0);
     const [address, setAddress] = useState(null);
+    const userName = useSelector((state) => state.user.user.name);
    
     const { initPaymentSheet, presentPaymentSheet} = useStripe();
 
@@ -147,7 +149,11 @@ function CartPage(props){
   // it will reset the cart and set the paymentConfirmed to false
   useEffect(() => {
     if (paymentConfirmed) {
-        Alert.alert('Payment confirmed! Your order has been created!');
+        Alert.alert(
+          "Dear " +
+            userName.split(" ")[0] +
+            ",\n Thank you for your continued support of Dartmart. We are proud to announce that 100% of the profits generated from your order will be donated to the national institute for mental health. We hope that this will help raise awareness and provide support for those who need it most. \n Thank you again for your support. \n \n Sincerely, \n The Dartmart Team ",
+        );
         props.navigation.navigate('Delivery')
     }
     

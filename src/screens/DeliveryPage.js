@@ -72,7 +72,14 @@ function DeliveryPage(props){
 
                     <View style={styles.orderInfo}>
                         <Text style={styles.text1}>{currOrder.id}</Text>
-                        <Text style={styles.text1}>{"45 Minutes"}</Text>
+                       {
+                        // check if any item in currOrder has a category "snack" or "frozen"
+                        // if so, then the order will take 45 minutes, otherwise it will be delivered on Saturday between 2-4 PM
+                        currOrder.orderItems.some((item) => item.category === "snack" || item.category === "frozen") ?
+                        <Text style={styles.text1}>45 Minutes</Text> :
+                        <Text style={styles.text1}> Saturday 2-4 PM</Text>
+                       }
+
                     </View>
 
                     <View style={styles.dividerLine}></View>
@@ -116,7 +123,7 @@ const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     text1: {
         color: 'white',
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         alignSelf: 'center',
         alignItems: 'center',
