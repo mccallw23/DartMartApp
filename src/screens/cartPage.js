@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, TextInput   } from 'react-native';
+import { ActivityIndicator, TextInput,SafeAreaView  } from 'react-native';
 import { connect, useSelector } from 'react-redux';
 import { StyleSheet, Text, Image, View, TouchableOpacity, Dimensions, ScrollView, Modal, Pressable, Button, Alert} from 'react-native';
 import { CardField, retrievePaymentIntent, useStripe} from '@stripe/stripe-react-native';
@@ -13,7 +13,7 @@ import {
 } from "../Constants";
 import { useClientSocket } from '../components/clientSocket';
 const devPerms = true;
-
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 function CartPage(props){
     const [joinRoomForPayment] = useClientSocket({
@@ -33,6 +33,8 @@ function CartPage(props){
     const [fees, setFees] = useState(0);
     const [sum, setSum] = useState(0);
     const [address, setAddress] = useState(null);
+    const [roomNumber, setRoomNumber] = useState(null);
+    //const [addressNumber, setAddressNumber] = useState(null);
     const userName = useSelector((state) => state.user.user.name);
    
     const { initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -78,6 +80,7 @@ function CartPage(props){
   };
 
    const openPaymentSheet = async () => {
+                    
        if(cart.length > 0){
            const cartInfo = {
             customerId: user.id,
@@ -114,19 +117,25 @@ function CartPage(props){
         const {clientSecret, errorWhatever} = await fetchPaymentIntentClientSecret();
         const { error } = await presentPaymentSheet({ clientSecret, confirmPayment: false });
         
-
+        let cartCopy = cart;
+        cart.forEach(({ item, quantity }) => {
+          props.removeItem(item);
+        });
         if (error) {
             Alert.alert(`Error code: ${error.code}`, error.message);
         } else {
                   //Handle successful payment here
                   props.submitOrder({
                     customerId: user.id,
-                    orderItems: cart,
+                    orderItems: cartCopy,
                     status: "queued",
                     orderPaymentAmount: cartTotal,
-                    address: address
+                    address: address + "room " + roomNumber
                     })
+                    //remove all items from cart
                     setPaymentSubmitted(true);
+                    // for every item in the cart, remove 
+                   
                 }
         } 
     }
@@ -152,9 +161,9 @@ function CartPage(props){
         Alert.alert(
           "Dear " +
             userName.split(" ")[0] +
-            ",\n Thank you for your continued support of Dartmart. We are proud to announce that 100% of the profits generated from your order will be donated to the national institute for mental health. We hope that this will help raise awareness and provide support for those who need it most. \n Thank you again for your support. \n \n Sincerely, \n The Dartmart Team ",
+            ",\n Thank you for your continued support of Dartmart. We are proud to announce that 100% of the profits generated from your order will be donated to the Dartmouth Mental Health Initiative. We hope that this will help raise awareness and provide support for those who need it most. \n Thank you again for your support. \n \n Sincerely, \n The Dartmart Team ",
         );
-        props.navigation.navigate('Delivery')
+        props.navigation.navigate('Delivery');
     }
     
     return () => {
@@ -229,91 +238,131 @@ function CartPage(props){
         )
     }
     return (
-        <View backgroundColor='#02604E' style={{height: windowHeight * .9}}>
-            {/* SCROLL VIEW FOR ITEMS IN CART */}
-            <Text style={styles.featuredText}>Shopping Cart</Text>
-            <ScrollView contentContainerStyle={styles.itemsContainer}>
-                {/* text entry space for a delivery address */}
-                <View style={styles.addressContainer}>
-                    <Text style={styles.addressText}> Enter Your Delivery Address:</Text>
-                    <TextInput
-                        style={styles.addressInput}
-                        placeholder='Enter your address'
-                        placeholderTextColor='white'
-                        onChangeText={text => setAddress(text)}
-                        value={address}
-                    />
-                    <Text>*** address must be within 1.5 miles of Dartmouth college ***</Text>
-                </View>
-                {/* <View style={styles.itemsContainer}> */}
-                    {cart.map(({item, quantity}) => {
-                        return (
-                            <View key={item.name} style={styles.itemContainer}>
-                                {/* <View style={styles.imageContainer}>
+      <View backgroundColor='#02604E' style={{ height: windowHeight * 0.9 }}>
+        {/* SCROLL VIEW FOR ITEMS IN CART */}
+        <Text style={styles.featuredText}>Shopping Cart</Text>
+        <ScrollView contentContainerStyle={styles.itemsContainer}>
+          {/* text entry space for a delivery address */}
+          <View>
+            <Text style={styles.addressText}>
+              {" "}
+              Enter Your Delivery Address:
+            </Text>
+            <SafeAreaView>
+              <GooglePlacesAutocomplete
+                placeholder='Enter Delivery Address'
+                // restrict searches to Hanover, NH USA 03755
+                query={{
+                  key: "AIzaSyCqtAeqvjyx7jKa8SlmtmjsuMziiOtphlM",
+                  // search results must be in Hanover, NH
+                  components: "country:us",
+                  location: "43.7025,-72.2896",
+                  radius: "5000",
+                  locationRestriction: "circle:5000@43.7025,-72.2896",
+                  strictbounds: true,
+                }}
+                fetchDetails={true}
+                onPress={(data, details = null) => setAddress(data.description)}
+                onFail={(error) => console.log(error)}
+                onNotFound={() => console.log("no results")}
+              />
+            </SafeAreaView>
+            <TextInput
+              keyboardType='numeric'
+              style={styles.addressInput}
+              placeholder='Room Number (optional)'
+              placeholderTextColor='gray'
+              onChangeText={(text) => setRoomNumber(text)}
+              value={roomNumber}
+            />
+            {/* <Text>
+              *** address must be within 1.5 miles of Dartmouth college ***
+            </Text> */}
+          </View>
+          {/* <View style={styles.itemsContainer}> */}
+          {cart.map(({ item, quantity }) => {
+            return (
+              <View key={item.name} style={styles.itemContainer}>
+                {/* <View style={styles.imageContainer}>
                                     <
                                 </View> */}
-                                <View style={styles.imageContainer}>
-                                    <Image source={{uri: item.imageURL}} style={styles.image} />
-                                </View>
-                                <View style={styles.itemInfoContainer}>
-                                    <View style={styles.itemNameContainer}>
-                                        <Text style={styles.itemName}>{item.name}</Text>
-                                    </View>
-
-
-                                    <View style= {styles.costAndQuantity}>
-                                        <View style = {styles.itemCostContainer}>
-                                            <Text style={styles.itemCost}>${Math.round((item.cost * quantity) * 100) / 100}</Text>
-                                        </View>
-                                        <View style={styles.quantityContainer}>
-                                            <TouchableOpacity style={styles.quantityButton} onPress={()=> {if(quantity > 0) props.addItem(item, -1)}}>
-                                                <Text style={styles.quantitySymbol}>-</Text>
-                                            </TouchableOpacity>    
-                                            <Text style={styles.text1}>{quantity}</Text>
-                                            <TouchableOpacity style={styles.quantityButton} onPress={()=>props.addItem(item, 1)}>
-                                                <Text style={styles.quantitySymbol}>+</Text>
-                                            </TouchableOpacity> 
-                                        </View>
-                                    </View>
-                                </View>
-                                <Pressable style={{position: 'absolute', top: 10, right: 10}} onPress={() => {props.removeItem(item)}}>
-                                    <Ionicons name="close" size={25}/>
-                                </Pressable>
-                            </View>
-                        )
-                    })}
-                {/* </View> */}
-            </ScrollView>
-
-            <View style={styles.checkoutInfo}>
-                <View>
-                    <View>
-                        <View style={styles.subtotal}>
-                            <View style={styles.costLine}>
-                                <Text style={styles.text2}>Cart Total</Text>
-                                <Text style={styles.text2}>${sum}</Text>
-                            </View>
-                            <View style={styles.costLine}>
-                                <Text style={styles.text2}>Tax and Fees</Text>
-                                <Text style={styles.text2}>${fees}</Text>
-                            </View>
-                            <View style={styles.costLine}>
-                                <Text style={styles.text2}>Tips</Text>
-                                <Text style={styles.text2}>$0</Text>
-                            </View>
-                        </View>
-                    </View>
+                <View style={styles.imageContainer}>
+                  <Image source={{ uri: item.imageURL }} style={styles.image} />
                 </View>
+                <View style={styles.itemInfoContainer}>
+                  <View style={styles.itemNameContainer}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                  </View>
 
-                <View style={styles.dividerLine}>
-                    <Text style={styles.text1} justifyContent='center' ></Text>
-                </View>
-                <View style={styles.subtotal}>
-                    <View style={styles.costLine}>
-                        <Text style={styles.text2}>Total</Text>
-                        <Text style={styles.text2}>${cartTotal / 100}</Text>
+                  <View style={styles.costAndQuantity}>
+                    <View style={styles.itemCostContainer}>
+                      <Text style={styles.itemCost}>
+                        ${Math.round(item.cost * quantity * 100) / 100}
+                      </Text>
                     </View>
-                    {/* <CardField
+                    <View style={styles.quantityContainer}>
+                      <TouchableOpacity
+                        style={styles.quantityButton}
+                        onPress={() => {
+                          if (quantity > 0) props.addItem(item, -1);
+                        }}
+                      >
+                        <Text style={styles.quantitySymbol}>-</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.text1}>{quantity}</Text>
+                      <TouchableOpacity
+                        style={styles.quantityButton}
+                        onPress={() => props.addItem(item, 1)}
+                      >
+                        <Text style={styles.quantitySymbol}>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                <Pressable
+                  style={{ position: "absolute", top: 10, right: 10 }}
+                  onPress={() => {
+                    console.log("item removed from cart yolo", item);
+                    props.removeItem(item);
+                  }}
+                >
+                  <Ionicons name='close' size={25} />
+                </Pressable>
+              </View>
+            );
+          })}
+          {/* </View> */}
+        </ScrollView>
+
+        <View style={styles.checkoutInfo}>
+          <View>
+            <View>
+              <View style={styles.subtotal}>
+                <View style={styles.costLine}>
+                  <Text style={styles.text2}>Cart Total</Text>
+                  <Text style={styles.text2}>${sum}</Text>
+                </View>
+                <View style={styles.costLine}>
+                  <Text style={styles.text2}>Tax and Fees</Text>
+                  <Text style={styles.text2}>${fees}</Text>
+                </View>
+                <View style={styles.costLine}>
+                  <Text style={styles.text2}>Tips</Text>
+                  <Text style={styles.text2}>$0</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.dividerLine}>
+            <Text style={styles.text1} justifyContent='center'></Text>
+          </View>
+          <View style={styles.subtotal}>
+            <View style={styles.costLine}>
+              <Text style={styles.text2}>Total</Text>
+              <Text style={styles.text2}>${cartTotal / 100}</Text>
+            </View>
+            {/* <CardField
         postalCodeEnabled={true}
         placeholders={{
           number: '4242 4242 4242 4242',
@@ -334,12 +383,18 @@ function CartPage(props){
           console.log('focusField', focusedField);
         }}
       /> */}
-                </View>
-                
-                <TouchableOpacity key="uniqueId1" style={styles.checkOutButton} onPress={openPaymentSheet}>
-                  <Text style={styles.text1} justifyContent='center'>Check Out</Text>
-                </TouchableOpacity>
-                 {/* <CardField 
+          </View>
+
+          <TouchableOpacity
+            key='uniqueId1'
+            style={styles.checkOutButton}
+            onPress={openPaymentSheet}
+          >
+            <Text style={styles.text1} justifyContent='center'>
+              Check Out
+            </Text>
+          </TouchableOpacity>
+          {/* <CardField 
                   postalCodeEnabled={true}
                     cardStyle={styles.card}
                     style={styles.cardContainer}
@@ -349,13 +404,11 @@ function CartPage(props){
                     }}
                   /> */}
 
-                  {/* <TouchableOpacity key="uniqueId1" style={styles.checkOutButton} onPress={openPaymentSheet}>
+          {/* <TouchableOpacity key="uniqueId1" style={styles.checkOutButton} onPress={openPaymentSheet}>
                   <Text style={styles.text1} justifyContent='center'>Submit Order</Text>
                 </TouchableOpacity> */}
-                  
-            </View>
         </View>
-        
+      </View>
     );
 }
 const windowWidth = Dimensions.get('window').width;
@@ -380,15 +433,14 @@ const styles = StyleSheet.create({
 
     addressInput:
     {
-        backgroundColor: '#02604E',
-        width: windowWidth * .8,
+        backgroundColor: "white",
+        width: windowWidth * .5,
         height: windowHeight * .05,
-        borderRadius: 10,
-        margin: 10,
+        borderRadius: 5,
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        color: 'white',
+        color: 'black',
     },
 
     addressText:
@@ -558,7 +610,7 @@ const styles = StyleSheet.create({
         width: windowWidth* 0.95,
     },  
     dividerLine : {
-        backgroundColor: 'grey',
+        backgroundColor: 'rgb(240,240,240)',
         width: windowWidth* 0.9,
         height: 3,
         borderRadius: 10,

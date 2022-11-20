@@ -18,8 +18,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { readRemoteFile } from "react-native-csv";
 import CategorySelect from "../components/homeComponents/categorySelect";
 import ProductCard from "../components/homeComponents/ProductCard";
+import {
+  LazyLoadImage,
+  trackWindowScroll,
+} from "react-lazy-load-image-component";
 
-function HomePage({ fetchItems, addItem, setCategory, navigation }) {
+
+function HomePage({ fetchItems, addItem, setCategory, navigation, trackWindowScroll}) {
   const ref = useRef(null);
 
   const allItems = useSelector((state) => state.item.allItems);

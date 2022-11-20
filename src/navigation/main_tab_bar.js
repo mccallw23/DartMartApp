@@ -54,7 +54,7 @@ const Tab = createBottomTabNavigator();
 function MainTabBar(props) {
   useEffect(() => {
     props.fetchOrders();
-  }, []);
+  }, [order]);
   const user = useSelector((state) => state.user.user);
   const order = useSelector((state) => state.item.cart);
 
@@ -88,7 +88,7 @@ function MainTabBar(props) {
           height: windowHeight * 0.15,
         },
         headerTitleAlign: "left",
-        headerTitle: "Dartmart",
+        headerTitle: "DartMart",
         headerTitleStyle: {
           marginLeft: 30,
           fontSize: 30,

@@ -11,6 +11,9 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+//import FastImage from "react-native-fast-image";
+//import ExpoFastImage from "expo-fast-image";
+//import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -24,7 +27,7 @@ const ProductCard = ({
 }) => {
   return (
     <TouchableHighlight
-      underlayColor="transparent"
+      underlayColor='transparent'
       onPress={() => {
         setSelectedItem(item);
         setModalVisible(!modalVisible);
@@ -32,6 +35,7 @@ const ProductCard = ({
     >
       <View style={styles.itemContainer}>
         <Text style={styles.itemName}>{item.name}</Text>
+
         <Image
           source={item.imageURL ? { uri: item.imageURL } : null}
           style={styles.image}

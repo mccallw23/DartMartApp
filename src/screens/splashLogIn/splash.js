@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity, Dimensions, ScrollView, Modal, Pressable } from 'react-native';
 import SSOLogin from '../ssoLogin';
+//import EmailSignin from "../emailSignIn.js";
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { Ionicons } from "@expo/vector-icons";
+
 
 
 const Splash  = ({navigation}) => {
@@ -20,24 +22,31 @@ const Splash  = ({navigation}) => {
     return (
       <View style={styles.container}>
         <View style={styles.logoContainer}>
-            <Ionicons name="pizza" color={'#02604E'} size={100} />
-            <Text style={styles.logo1}> Welcome To </Text>
-            <Text style={styles.logo2}> Dartmart</Text>
+          <Ionicons name='pizza' color={"#02604E"} size={100} />
+          <Text style={styles.logo1}> Welcome To </Text>
+          <Text style={styles.logo2}> DartMart</Text>
         </View>
 
-        <View style = {styles.footer}>
-            <View style={styles.modalContainer}>
+        <View style={styles.footer}>
+          <View style={styles.modalContainer}>
+            <View style={styles.authenticateSection}>
+              <TouchableOpacity
+                style={styles.ssoButton}
+                onPress={() => navigation.navigate("SSOLogin")}
+              >
+                <Text style={styles.text1}>SSO Login</Text>
+                <Ionicons name='arrow-forward' color={"whitesmoke"} size={80} />
+              </TouchableOpacity>
 
-
-
-              <View style={styles.authenticateSection}>
-              <TouchableOpacity style={styles.ssoButton} onPress={()=>navigation.navigate('SSOLogin')}>
-                  <Ionicons name="arrow-forward" color={'whitesmoke'} size={80} />
-                  <Text style={styles.text1}>SSO Login</Text>
-                </TouchableOpacity>
-              </View>
-
+              <TouchableOpacity
+                style={styles.ssoButton}
+                onPress={() => navigation.navigate("SSOLogin")}
+              >
+                <Text style={styles.text1}>Email Login</Text>
+                <Ionicons name='arrow-forward' color={"whitesmoke"} size={80} />
+              </TouchableOpacity>
             </View>
+          </View>
         </View>
       </View>
     );
@@ -100,10 +109,11 @@ authenticateSection: {
   justifyContent: 'center',
 },
 ssoButton: {
-  marginTop: 10,
+  marginTop: 5,
   alignContent: 'center',
   alignItems: 'center',
   justifyContent: 'center',
+  flexDirection: 'row',
   opacity: 12,
   borderRadius: 18,
   paddingVertical: 10,
