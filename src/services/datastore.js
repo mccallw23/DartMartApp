@@ -17,6 +17,11 @@ import {
   ROUTE_CUSTOMERS,
   LIVE_STRIPE_SERVER,
 } from "../Constants";
+import { useNavigation } from "@react-navigation/native";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+
 //import Stripe from "stripe";
 //import 'dotenv/config';
 
@@ -45,6 +50,23 @@ const db = getFirestore(app);
 
 // check if a user with a given email address already exists
 // initialize a user in the database
+// function to login a user with email and password
+
+
+export async function LoginUser (email, password) {
+  try {
+    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+    //const navigation = useNavigation();
+    return userCredential;
+  } catch (error) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+   alert(errorMessage, errorCode);
+    return error;
+  }
+}
+
+
 
 // Fetch all items for displaying product options in menu
 export async function fetchItems() {
@@ -243,3 +265,4 @@ export async function fetchOrders(customerId) {
     return null;
   }
 }
+export default firebase;

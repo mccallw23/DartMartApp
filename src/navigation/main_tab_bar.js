@@ -21,6 +21,7 @@ import { useFonts } from "expo-font";
 import AppLoading from "expo-app-loading";
 import { useClientSocket } from "../components/clientSocket";
 import styled from "styled-components/native";
+import firebase from '../services/datastore.js';
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -55,7 +56,10 @@ function MainTabBar(props) {
   useEffect(() => {
     props.fetchOrders();
   }, [order]);
-  const user = useSelector((state) => state.user.user);
+
+  const user = useSelector((state) => state.user.user);;
+
+  console.log(user);
   const order = useSelector((state) => state.item.cart);
 
   console.log("Cart Contents", order);
@@ -72,6 +76,7 @@ function MainTabBar(props) {
 
   const logout = () => {
     props.navigation.navigate("Logout");
+    
   };
   return (
     <Tab.Navigator

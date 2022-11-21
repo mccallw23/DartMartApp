@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity, Dimensions, ScrollView, Modal, Pressable } from 'react-native';
 import SSOLogin from '../ssoLogin';
-//import EmailSignin from "../emailSignIn.js";
+import EmailLogin from '../EmailLogin';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { Ionicons } from "@expo/vector-icons";
@@ -40,7 +40,7 @@ const Splash  = ({navigation}) => {
 
               <TouchableOpacity
                 style={styles.ssoButton}
-                onPress={() => navigation.navigate("SSOLogin")}
+                onPress={() => navigation.navigate("EmailLogin")}
               >
                 <Text style={styles.text1}>Email Login</Text>
                 <Ionicons name='arrow-forward' color={"whitesmoke"} size={80} />

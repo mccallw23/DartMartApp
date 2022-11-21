@@ -7,6 +7,7 @@ import { updateUser } from '../actions/index';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import firebase from "../services/datastore.js";
 
 function ProfilePage(props){
 
@@ -55,35 +56,45 @@ function ProfilePage(props){
     }
 
     return (
-        <View backgroundColor='red' style={styles.container}>
+      <View backgroundColor='red' style={styles.container}>
+        <Text style={styles.featuredText}> {user?.name}</Text>
+        {user?.isDriver === false ? (
+          <Text style={styles.text2}> Customer </Text>
+        ) : (
+          <Text style={styles.text2}> Driver </Text>
+        )}
+        <View style={styles.buttonsSection}>
+          <TouchableOpacity onPress={contactAlert} style={styles.profileButton}>
+            <MaterialIcons name='contact-phone' size={50} color='whitesmoke' />
+            <Text style={styles.text1}>Contact Us</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={futureFeatureAlertPersonalInfo}
+          >
+            <AntDesign name='user' size={50} color='whitesmoke' />
+            <Text style={styles.text1}>Personal Info</Text>
+          </TouchableOpacity>
 
-                <Text style={styles.featuredText}> {user?.name}</Text>
-                {user?.isDriver === false ? <Text style={styles.text2}> Customer </Text> :  
-                <Text style={styles.text2}> Driver </Text> }
-                <View style={styles.buttonsSection}>
-                    <TouchableOpacity onPress={contactAlert} style={styles.profileButton}>
-                        <MaterialIcons name="contact-phone" size={50} color="whitesmoke" />
-                        <Text style={styles.text1}>Contact Us</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.profileButton} onPress={futureFeatureAlertPersonalInfo}>
-                        <AntDesign name="user" size={50} color="whitesmoke" />
-                        <Text style={styles.text1}>Personal Info</Text>
-                    </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={futureFeatureAlertPayment}
+          >
+            <Ionicons name='card' size={50} color={"whitesmoke"} />
+            <Text style={styles.text1}>Payment</Text>
+          </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.profileButton} onPress={futureFeatureAlertPayment}>
-                        <Ionicons name='card' size={50} color={'whitesmoke'}/>
-                        <Text style={styles.text1}>Payment</Text>
-                    </TouchableOpacity>
+          <TouchableOpacity
+            onPress={props.route.params.logout}
+            style={styles.profileButton}
+          >
+            <MaterialIcons name='logout' size={50} color='whitesmoke' />
+            <Text style={styles.text1}>Logout</Text>
+          </TouchableOpacity>
 
-                    <TouchableOpacity onPress={props.route.params.logout} style={styles.profileButton}>
-                        <MaterialIcons name="logout" size={50} color="whitesmoke" />
-                        <Text style={styles.text1}>Logout</Text>
-                    </TouchableOpacity>
-
-                    {extraDriverButton()}
-
-                </View>
+          {extraDriverButton()}
         </View>
+      </View>
     );
 }
 
