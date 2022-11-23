@@ -130,7 +130,8 @@ function CartPage(props){
                     orderItems: cartCopy,
                     status: "queued",
                     orderPaymentAmount: cartTotal,
-                    address: address + "room " + roomNumber
+                    address: address + "room " + roomNumber,
+                    placedAt: new Date().toString()
                     })
                     //remove all items from cart
                     setPaymentSubmitted(true);

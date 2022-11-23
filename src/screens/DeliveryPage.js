@@ -16,16 +16,59 @@ function DeliveryPage(props){
     //const userOrders = useSelector((state) => state.order?.all);
     // find the orders that are associated with the user from all of the orders
     const orders = useSelector((state) => state.order.all)
-    const userOrders = orders?.filter((order) => order.userId === userId);
+    //const userOrders = orders?.filter((order) => order.userId === userId);
     
     
     // the last order that this user placed
-    const currOrder = orders?.[orders.length - 1];
+    // match current order to the last order placed by the user with the user ID
+    // sort orders by customer id and then by date placedAt
+
+    useEffect(() => {
+        props.fetchOrders();
+    }, []);
+
+    const userOrders = orders?.filter((order) => order.customerId === userId);
+    const sortedOrders = userOrders?.sort((a, b) => {
+        // if niether order has a placedAt date, return 0
+        if (!a.placedAt && !b.placedAt) {
+            return 0;
+        }
+        // if a has a placedAt date and b does not, return -1
+        if (a.placedAt && !b.placedAt) {
+            return -1;
+        }
+        // if b has a placedAt date and a does not, return 1
+        if (!a.placedAt && b.placedAt) {
+            return 1;
+        }
+        // if both orders have a placedAt date, return the difference between the two dates
+        return new Date(b.placedAt) - new Date(a.placedAt);
+    });
+    const currOrder = sortedOrders?.[0];
+    
+    // let count = 0;
+    // sortedOrders.forEach((order) => {
+    //     // console.log("count:", count);
+    //     // console.log("YoloSortedOrder: ", order);
+    //     count++;
+    // });
+
+     
+    //  orders?.filter((order) => order.customerId === userId).sort((a, b) => {
+    //     if (a.placedAt && b.placedAt) {
+    //       return new Date(b.placedAt) - new Date(a.placedAt);
+    //     } else {
+    //       return 0;
+    //     }
+    // })[0];
+
+    //const currOrder = orders?.filter((order) => order.customerId === userId).pop();
+    //const currOrder = userOrders?.[userOrders.length - 1];
 
     const orderStatusCheck  = () => {
         console.log("DeliveryPage.js || OrderStatusCheck || userID :", userId, typeof userId);
-        console.log("DeliveryPage.js || OrderStatusCheck || userOrders :", userOrders);
-        if (!userOrders) {
+       //console.log("DeliveryPage.js || OrderStatusCheck || userOrders :", userOrders);
+        if (!currOrder) {
             return noOrderView()
         } else {
             return orderConfirmedView()
