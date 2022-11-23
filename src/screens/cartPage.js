@@ -241,32 +241,43 @@ function CartPage(props){
       <View backgroundColor='#02604E' style={{ height: windowHeight * 0.9 }}>
         {/* SCROLL VIEW FOR ITEMS IN CART */}
         <Text style={styles.featuredText}>Shopping Cart</Text>
-        <ScrollView contentContainerStyle={styles.itemsContainer}>
+        <ScrollView
+          contentContainerStyle={styles.itemsContainer}
+          keyboardShouldPersistTaps={"handled"}
+        >
           {/* text entry space for a delivery address */}
           <View>
             <Text style={styles.addressText}>
               {" "}
               Enter Your Delivery Address:
             </Text>
-            <SafeAreaView>
-              <GooglePlacesAutocomplete
-                placeholder='Enter Delivery Address'
-                // restrict searches to Hanover, NH USA 03755
-                query={{
-                  key: "AIzaSyCqtAeqvjyx7jKa8SlmtmjsuMziiOtphlM",
-                  // search results must be in Hanover, NH
-                  components: "country:us",
-                  location: "43.7025,-72.2896",
-                  radius: "5000",
-                  locationRestriction: "circle:5000@43.7025,-72.2896",
-                  strictbounds: true,
-                }}
-                fetchDetails={true}
-                onPress={(data, details = null) => setAddress(data.description)}
-                onFail={(error) => console.log(error)}
-                onNotFound={() => console.log("no results")}
-              />
-            </SafeAreaView>
+            <ScrollView keyboardShouldPersistTaps={"handled"}>
+              <View keyboardShouldPersistTaps={"handled"}>
+                <GooglePlacesAutocomplete
+                  placeholder='Enter Delivery Address'
+                  // restrict searches to Hanover, NH USA 03755
+                  query={{
+                    key: "AIzaSyCqtAeqvjyx7jKa8SlmtmjsuMziiOtphlM",
+                    // search results must be in Hanover, NH
+                    components: "country:us",
+                    location: "43.7025,-72.2896",
+                    radius: "5000",
+                    locationRestriction: "circle:5000@43.7025,-72.2896",
+                    strictbounds: true,
+                  }}
+                  fetchDetails={true}
+                  onPress={(data, details = null) =>
+                    setAddress(data.description)
+                  }
+                  onFail={(error) => console.log(error)}
+                  onNotFound={() =>
+                    alert(
+                      "Address must be within 5 kilometers of Dartmouth College",
+                    )
+                  }
+                />
+              </View>
+            </ScrollView>
             <TextInput
               keyboardType='numeric'
               style={styles.addressInput}
